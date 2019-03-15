@@ -545,9 +545,13 @@ module PixelDrawr {
          * Draws the background canvas onto the main canvas' context.
          */
         drawBackground(): void {
-            this.context.drawImage(this.backgroundCanvas, 0, 0);
-        }
 
+            // **
+            // clear rect will keep the background transparent instead of painting the canvas with a solid background
+            // **
+            //this.context.drawImage(this.backgroundCanvas, 0, 0);
+            this.context.clearRect(0, 0, this.MapScreener[this.keyWidth], this.MapScreener[this.keyHeight]);
+        }
 
         /* Core rendering
         */

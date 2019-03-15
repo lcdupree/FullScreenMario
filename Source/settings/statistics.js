@@ -19,7 +19,7 @@ FullScreenMario.FullScreenMario.settings.statistics = {
         ["tr", {
             "style": {
                 "padding": "7px 14px 0 14px",
-                "textAlign": "center"
+                "textAlign": "right"
             }
         }]
     ],
@@ -52,7 +52,7 @@ FullScreenMario.FullScreenMario.settings.statistics = {
         "time": {
             "valueDefault": 0,
             "digits": 3,
-            "hasElement": true,
+            //"hasElement": true,
             "minimum": 0,
             "triggers": {
                 "100": function (EightBitter) {
@@ -67,19 +67,19 @@ FullScreenMario.FullScreenMario.settings.statistics = {
         },
         "world": {
             "valueDefault": 0,
-            "hasElement": true
+            //"hasElement": true
         },
         "coins": {
             "valueDefault": 0,
-            "hasElement": true,
+            //"hasElement": true,
             "modularity": 100,
             "onModular": function (EightBitter) {
                 EightBitter.gainLife();
             }
         },
         "lives": {
-            "valueDefault": 3,
-            "hasElement": true
+            "valueDefault": 99,
+            //"hasElement": true
         },
         "luigi": {
             "valueDefault": 0,

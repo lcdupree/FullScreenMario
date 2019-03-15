@@ -387,6 +387,9 @@ module UserWrappr {
             window[settings.globalName || "GameStarter"] = this.GameStarter;
             this.GameStarter.UserWrapper = this;
 
+            // **
+            // These two lines control whether the options control is loaded or not
+            // **
             this.loadGenerators();
             this.loadControls(settings.schemas);
 

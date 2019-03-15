@@ -147,7 +147,7 @@ module FullScreenMario {
                         "maps": "settings/maps.js",
                         "mods": "settings/mods.js",
                         "numbers": "settings/number.js",
-                        "objects": "settings/objetcs.js",
+                        "objects": "settings/objects.js",
                         "quadrants": "settings/quadrants.js",
                         "renderer": "settings/renderer.js",
                         "runner": "settings/runner.js",
@@ -6951,22 +6951,22 @@ module FullScreenMario {
         }
 
         /**
-         * Map entrance Function for entering an area climbing a Vine. The Vine 
-         * enters first by growing, then the player climbs it and hops off. The 
+         * Map entrance Function for entering an area climbing a Vine. The Vine
+         * enters first by growing, then the player climbs it and hops off. The
          * player's actions are done via mapEntranceVinePlayer and are triggered
          * when the Vine's top reaches its threshold.
-         * 
+         *
          * @param {FullScreenMario} FSM
          */
         mapEntranceVine(FSM: FullScreenMario): void {
             var threshold: number = (
-                FSM.MapScreener.bottom - FSM.unitsize * 40
+                    FSM.MapScreener.bottom - FSM.unitsize * 40
                 ),
                 vine: IVine = <IVine>FSM.addThing(
                     "Vine",
                     FSM.unitsize * 32,
                     FSM.MapScreener.bottom + FSM.unitsize * 8
-                    );
+                );
 
             FSM.TimeHandler.addEventInterval(
                 function (): boolean {
@@ -6986,7 +6986,7 @@ module FullScreenMario {
          * Continuation of mapEntranceVine for the player's actions. The player
          * climbs up the Vine; once it reaches the threshold, it hops off using
          * animatePlayerOffVine.
-         * 
+         *
          * @param {FullScreenMario} FSM
          * @param {Vine} vine
          */
