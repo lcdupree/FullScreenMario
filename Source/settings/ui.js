@@ -19,12 +19,7 @@ FullScreenMario.FullScreenMario.settings.ui = {
     },
     "helpSettings": {
         "globalNameAlias": "{%%%%GAME%%%%}",
-        "openings": [
-            "Hi, thanks for playing FullScreenMario! It looks like you're using the console.",
-            "There's not really any way to stop you from messing around so if you'd like to know the common cheats, enter `{%%%%GAME%%%%}.UserWrapper.displayHelpOptions()` here.",
-            "If you'd like, go ahead and look around the source code. There are a few surprises you might have fun with... ;)",
-            "http://www.github.com/FullScreenShenanigans/FullScreenMario"
-        ],
+        "openings": [],
         "options": {
             "Map": [{
                 "title": "{%%%%GAME%%%%}.MapsHandler.setMap",
@@ -295,21 +290,24 @@ FullScreenMario.FullScreenMario.settings.ui = {
                     };
                 });
             })(["left", "right", "up", "down", "sprint", "pause"])
-        }, {
-            "title": "Mods!",
-            "generator": "OptionsButtons",
-            "keyActive": "enabled",
-            "assumeInactive": true,
-            "options": function (GameStarter) {
-                return GameStarter.ModAttacher.getMods();
-            },
-            "callback": function (GameStarter, schema, button) {
-                GameStarter.ModAttacher.toggleMod(button.getAttribute("value") || button.textContent);
-            }
-        }, {
-            "title": "Editor",
-            "generator": "LevelEditor"
-        }, {
+        },
+        // {
+        //     "title": "Mods!",
+        //     "generator": "OptionsButtons",
+        //     "keyActive": "enabled",
+        //     "assumeInactive": true,
+        //     "options": function (GameStarter) {
+        //         return GameStarter.ModAttacher.getMods();
+        //     },
+        //     "callback": function (GameStarter, schema, button) {
+        //         GameStarter.ModAttacher.toggleMod(button.getAttribute("value") || button.textContent);
+        //     }
+        // },
+        // {
+        //     "title": "Editor",
+        //     "generator": "LevelEditor"
+        // },
+        {
             "title": "Maps",
             "generator": "MapsGrid",
             "rangeX": [1, 4],
