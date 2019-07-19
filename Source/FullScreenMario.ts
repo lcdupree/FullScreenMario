@@ -252,12 +252,17 @@ module FullScreenMario {
             super.resetItemsHolder(FSM, customs);
 
             if (customs.width < 560) {
-                (<HTMLElement>(<HTMLTableRowElement>FSM.ItemsHolder.getContainer().children[0]).cells[4]).style.display = "none";
+                // TODO: why do these elements not exist?
+                const cells = (<HTMLElement>(<HTMLTableRowElement>FSM.ItemsHolder.getContainer().children[0]).cells[4]);
+
+                if (cells) {
+                    (<HTMLElement>(<HTMLTableRowElement>FSM.ItemsHolder.getContainer().children[0]).cells[4]).style.display = "none";
+                }
             }
         }
 
         /**
-         * Sets this.container via the parent GameStartr resetContaienr.
+         * Sets this.container via the parent GameStartr resetContainer.
          *
          * The container is given the "Press Start" font, the PixelRender is told
          * to draw the scenery, solid, character, and text groups, and the container

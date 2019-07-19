@@ -148,7 +148,7 @@ declare module UserWrappr {
     }
 
     export interface IOptionsGenerator {
-        generate: (schema: UISchemas.ISchema) => HTMLDivElement;
+        generate: (schema: UISchemas.ISchema, settings: IUserWrapprSettings) => HTMLDivElement;
     }
 
     export interface IUserWrapprSizeSummary {
@@ -169,6 +169,11 @@ declare module UserWrappr {
         allPossibleKeys?: string[];
         gameElementSelector?: string;
         gameControlsSelector?: string;
+        gameElementControlWrapperClass?: string,
+        gameElementControlSectionClass?: string,
+        gameElementControlSectionHeadingClass?: string,
+        gameElementControlSectionInnerClass?: string,
+        gameElementControlOptionsGridClass?: string,
         log?: (...args: any[]) => void;
         customs?: GameStartr.IGameStartrCustoms;
         styleSheet?: StyleSheet;
@@ -873,7 +878,7 @@ module UserWrappr {
             });
 
             section.textContent = "";
-            section.className = "length-" + length;
+            section.className = (this.settings.gameElementControlWrapperClass ? this.settings.gameElementControlWrapperClass + " " : "") + "length-" + length;
 
             for (i = 0; i < length; i += 1) {
                 section.appendChild(this.loadControlDiv(schemas[i]));
@@ -887,22 +892,30 @@ module UserWrappr {
          * @return {HTMLDivElement}
          */
         private loadControlDiv(schema: UISchemas.ISchema): HTMLDivElement {
-            var control: HTMLDivElement = document.createElement("div"),
+            let control: HTMLDivElement = document.createElement("div"),
                 heading: HTMLHeadingElement = document.createElement("h4"),
                 inner: HTMLDivElement = document.createElement("div");
 
-            control.className = "control";
+            // set the control element ID and CSS classes
             control.id = "control-" + schema.title;
+            control.className = (this.settings.gameElementControlSectionClass ? this.settings.gameElementControlSectionClass + " " : "") + "control";
+
+            // set heading CSS classes?
+            if (this.settings.gameElementControlSectionHeadingClass) {
+                heading.className = this.settings.gameElementControlSectionHeadingClass;
+            }
 
             heading.textContent = schema.title;
 
-            inner.className = "control-inner";
-            inner.appendChild(this.generators[schema.generator].generate(schema));
+            // set the inner element CSS classes and generate the inner elements
+            inner.className = (this.settings.gameElementControlSectionInnerClass ? this.settings.gameElementControlSectionInnerClass + " " : "") + "control-inner";
+            inner.appendChild(this.generators[schema.generator].generate(schema, this.settings));
 
+            // insert the heading and inner elements into the control container
             control.appendChild(heading);
             control.appendChild(inner);
 
-            // Touch events often propogate to children before the control div has
+            // Touch events often propagate to children before the control div has
             // been fully extended. Setting the "active" attribute fixes that.
             control.onmouseover = setTimeout.bind(
                 undefined,
@@ -947,7 +960,7 @@ module UserWrappr {
             /**
              * Generates a control element based on the provided schema.
              */
-            generate(schema: ISchema): HTMLDivElement {
+            generate(schema: ISchema, settings: IUserWrapprSettings): HTMLDivElement {
                 throw new Error("AbstractOptionsGenerator is abstract. Subclass it.");
             }
 
@@ -959,7 +972,7 @@ module UserWrappr {
              * @return {HTMLElement}
              */
             protected getParentControlDiv(element: HTMLElement): HTMLElement {
-                if (element.className === "control") {
+                if (element.classList.contains("control")) {
                     return element;
                 } else if (!element.parentNode) {
                     return undefined;
@@ -1455,13 +1468,13 @@ module UserWrappr {
          * Options generator for a grid of maps, along with other options.
          */
         export class MapsGridGenerator extends AbstractOptionsGenerator implements IOptionsGenerator {
-            generate(schema: IOptionsMapGridSchema): HTMLDivElement {
-                var output: HTMLDivElement = document.createElement("div");
+            generate(schema: IOptionsMapGridSchema, settings: IUserWrapprSettings): HTMLDivElement {
+                let output: HTMLDivElement = document.createElement("div");
 
                 output.className = "select-options select-options-maps-grid";
 
                 if (schema.rangeX && schema.rangeY) {
-                    output.appendChild(this.generateRangedTable(schema));
+                    output.appendChild(this.generateRangedTable(schema, settings));
                 }
 
                 if (schema.extras) {
@@ -1471,7 +1484,7 @@ module UserWrappr {
                 return output;
             }
 
-            generateRangedTable(schema: IOptionsMapGridSchema): HTMLTableElement {
+            generateRangedTable(schema: IOptionsMapGridSchema, settings: IUserWrapprSettings): HTMLTableElement {
                 var scope: MapsGridGenerator = this,
                     table: HTMLTableElement = document.createElement("table"),
                     rangeX: number[] = schema.rangeX,
@@ -1481,13 +1494,17 @@ module UserWrappr {
                     i: number,
                     j: number;
 
+                if (settings.gameElementControlOptionsGridClass) {
+                    table.className = settings.gameElementControlOptionsGridClass;
+                }
+
                 for (i = rangeY[0]; i <= rangeY[1]; i += 1) {
                     row = document.createElement("tr");
-                    row.className = "maps-grid-row";
+                    row.className = (settings.gameElementControlOptionsGridClass ? settings.gameElementControlOptionsGridClass + "-row " : "") + "maps-grid-row";
 
                     for (j = rangeX[0]; j <= rangeX[1]; j += 1) {
                         cell = document.createElement("td");
-                        cell.className = "select-option maps-grid-option maps-grid-option-range";
+                        cell.className = (settings.gameElementControlOptionsGridClass ? settings.gameElementControlOptionsGridClass + "-row-item " : "") + "select-option maps-grid-option maps-grid-option-range";
                         cell.textContent = i + "-" + j;
                         cell.onclick = (function (callback: () => any): void {
                             if (scope.getParentControlDiv(cell).getAttribute("active") === "on") {
