@@ -252,7 +252,7 @@ module UserWrappr {
         private helpSettings: IGameStartrUIHelpSettings;
 
         /**
-         * What the global object is called (typically "window" for browser 
+         * What the global object is called (typically "window" for browser
          * environments and "global" for node-style environments).
          */
         private globalName: string;
@@ -377,7 +377,7 @@ module UserWrappr {
          * Resets the internal GameStarter by storing it under window, adding
          * InputWritr pipes for input to the page, creating the HTML buttons,
          * and setting additional CSS styles and page visiblity.
-         * 
+         *
          * @param {IUserWrapprSettings} settings
          * @param {GameStartr.IGameStartrCustoms} customs
          */
@@ -543,7 +543,7 @@ module UserWrappr {
          * Sets the size of the GameStartr by resetting the game with the size
          * information as part of its customs object. Full screen status is
          * changed accordingly.
-         * 
+         *
          * @param {Mixed} The size to set, as a String to retrieve the size from
          *                known info, or a container of settings.
          */
@@ -607,7 +607,7 @@ module UserWrappr {
 
         /**
          * Displays the summary for a help group of the given optionName.
-         * 
+         *
          * @param {String} optionName   The help group to display the summary of.
          */
         displayHelpGroupSummary(optionName: string): void {
@@ -630,7 +630,7 @@ module UserWrappr {
 
         /**
          * Displays the full information on a help group of the given optionName.
-         * 
+         *
          * @param {String} optionName   The help group to display the information of.
          */
         displayHelpOption(optionName: string): void {
@@ -677,7 +677,7 @@ module UserWrappr {
 
         /**
          * Logs a bit of help text, filtered by this.filterHelpText.
-         * 
+         *
          * @param {String} text   The text to be filtered and logged.
          */
         logHelpText(text: string): void {
@@ -694,7 +694,7 @@ module UserWrappr {
 
         /**
          * Ensures a bit of text is of least a certain length.
-         * 
+         *
          * @param {String} text   The text to pad.
          * @param {Number} length   How wide the text must be, at minimum.
          * @return {String} The text with spaces padded to the right.
@@ -716,7 +716,7 @@ module UserWrappr {
         /**
          * Sets the internal this.sizes as a copy of the given sizes, but with
          * names as members of every size summary.
-         * 
+         *
          * @param {Object} sizes   The listing of preset sizes to go by.
          */
         private importSizes(sizes: { [i: string]: IUserWrapprSizeSummary }): void {
@@ -732,7 +732,7 @@ module UserWrappr {
         }
 
         /**
-         * 
+         *
          */
         private fixCustoms(customsRaw: GameStartr.IGameStartrCustoms): any {
             var customs: GameStartr.IGameStartrCustoms = this.GameStartrConstructor.prototype.proliferate({}, customsRaw);
@@ -764,7 +764,7 @@ module UserWrappr {
         */
 
         /**
-         * Adds a "visibilitychange" handler to the document bound to 
+         * Adds a "visibilitychange" handler to the document bound to
          * this.handleVisibilityChange.
          */
         private resetPageVisibilityHandlers(): void {
@@ -774,7 +774,7 @@ module UserWrappr {
         /**
          * Handles a visibility change event by calling either this.onPageHidden
          * or this.onPageVisible.
-         * 
+         *
          * @param {Event} event
          */
         private handleVisibilityChange(event: Event): void {
@@ -817,7 +817,7 @@ module UserWrappr {
         /**
          * Loads the internal GameStarter, resetting it with the given customs
          * and attaching handlers to document.body and the holder elements.
-         * 
+         *
          * @param {Object} customs   Custom arguments to pass to this.GameStarter.
          */
         private loadGameStarter(customs: GameStartr.IGameStartrCustoms): void {
@@ -858,7 +858,7 @@ module UserWrappr {
         /**
          * Loads the externally facing UI controls and the internal ItemsHolder,
          * appending the controls to the controls HTML element.
-         * 
+         *
          * @param {Object[]} schemas   The schemas each a UI control to be made.
          */
         private loadControls(schemas: UISchemas.ISchema[]): void {
@@ -880,9 +880,9 @@ module UserWrappr {
             }
         }
 
-        /** 
+        /**
          * Creates an individual UI control element based on a UI schema.
-         * 
+         *
          * @param {Object} schema
          * @return {HTMLDivElement}
          */
@@ -909,7 +909,8 @@ module UserWrappr {
                 function (): void {
                     control.setAttribute("active", "on");
                 },
-                35);
+                35
+            );
 
             control.onmouseout = function (): void {
                 control.setAttribute("active", "off");
@@ -922,16 +923,16 @@ module UserWrappr {
     export module UISchemas {
         /**
          * Base class for options generators. These all store a UserWrapper and
-         * its GameStartr, along with a generate Function 
+         * its GameStartr, along with a generate Function
          */
         export class AbstractOptionsGenerator implements IOptionsGenerator {
             /**
-             * 
+             *
              */
             protected UserWrapper: UserWrappr.UserWrappr;
 
             /**
-             * 
+             *
              */
             protected GameStarter: GameStartr.IGameStartr;
 
@@ -953,7 +954,7 @@ module UserWrappr {
             /**
              * Recursively searches for an element with the "control" class
              * that's a parent of the given element.
-             * 
+             *
              * @param {HTMLElement} element
              * @return {HTMLElement}
              */
@@ -971,10 +972,10 @@ module UserWrappr {
              * Ensures a child's required local storage value is being stored,
              * and adds it to the internal GameStarter.ItemsHolder if not. If it
              * is, and the child's value isn't equal to it, the value is set.
-             * 
+             *
              * @param {Mixed} childRaw   An input or select element, or an Array
-             *                           thereof. 
-             * @param {Object} details   Details containing the title of the item 
+             *                           thereof.
+             * @param {Object} details   Details containing the title of the item
              *                           and the source Function to get its value.
              * @param {Object} schema   The container schema this child is within.
              */
@@ -1010,11 +1011,11 @@ module UserWrappr {
             }
 
             /**
-             * The equivalent of ensureLocalStorageValue for an entire set of 
+             * The equivalent of ensureLocalStorageValue for an entire set of
              * elements, running the equivalent logic on all of them.
-             * 
+             *
              * @param {Mixed} childRaw   An Array of input or select elements.
-             * @param {Object} details   Details containing the title of the item 
+             * @param {Object} details   Details containing the title of the item
              *                           and the source Function to get its value.
              * @param {Object} schema   The container schema this child is within.
              */
@@ -1052,7 +1053,7 @@ module UserWrappr {
             /**
              * Stores an element's value in the internal GameStarter.ItemsHolder,
              * if it has the "localStorageKey" attribute.
-             * 
+             *
              * @param {HTMLElement} child   An element with a value to store.
              * @param {Mixed} value   What value is to be stored under the key.
              */
