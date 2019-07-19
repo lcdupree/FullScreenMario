@@ -6,12 +6,12 @@ FullScreenMario.FullScreenMario.settings.ui = {
         },
         "@font-face": {
             "font-family": "'Press Start'",
-            "src": "url('Fonts/pressstart2p-webfont.eot')",
+            "src": "url('/game/fonts/pressstart2p-webfont.eot')",
             "src": [
-                    "url('Fonts/pressstart2p-webfont.eot?#iefix') format('embedded-opentype')",
-                    "url('Fonts/pressstart2p-webfont.woff') format('woff')",
-                    "url('Fonts/pressstart2p-webfont.ttf') format('truetype')",
-                    "url('Fonts/pressstart2p-webfont.svg') format('svg')"
+                    "url('/game/fonts/pressstart2p-webfont.eot?#iefix') format('embedded-opentype')",
+                    "url('/game/fonts/pressstart2p-webfont.woff') format('woff')",
+                    "url('/game/fonts/pressstart2p-webfont.ttf') format('truetype')",
+                    "url('/game/fonts/pressstart2p-webfont.svg') format('svg')"
             ].join(", "),
             "font-weight": "normal",
             "font-style": "normal"

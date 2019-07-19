@@ -1,5 +1,5 @@
 FullScreenMario.FullScreenMario.settings.audio = {
-    "directory": "Sounds",
+    "directory": "/game/sounds",
     "fileTypes": ["mp3", "ogg"],
     "library": {
         "Sounds": [
