@@ -280,7 +280,7 @@ FullScreenMario.FullScreenMario.settings.ui = {
                         }
                     };
                 });
-            })(["left", "right", "up", "down", "sprint", "pause"])
+            })(["left", "right", "up", "down", "sprint", "pause", "mute"])
         },
         // {
         //     "title": "Mods!",

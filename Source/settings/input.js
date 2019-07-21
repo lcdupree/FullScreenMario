@@ -4,12 +4,12 @@ FullScreenMario.FullScreenMario.settings.input = {
             // Keyboard aliases
             "left":   [65, 37],     // a,     left
             "right":  [68, 39],     // d,     right
-            "up":     [87, 38, 32], // w,     up,    space
+            "up":     [87, 38], // w,     up,    space
             "down":   [83, 40],     // s,     down
             "sprint": [16, 17],     // shift, ctrl
             "pause":  [80],         // p (pause)
             // Mute and Luigi disabled because there's a GUI for them now
-            // "mute":   [77],         // m (mute)
+            "mute":   [77],         // m (mute)
             // "l":      [76],         // l (luigi)
             // Mouse aliases
             "rightclick": [3],
