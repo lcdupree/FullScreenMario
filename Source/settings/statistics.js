@@ -31,7 +31,7 @@ FullScreenMario.FullScreenMario.settings.statistics = {
             "valueDefault": 1
         },
         "muted": {
-            "valueDefault": false
+            "valueDefault": true
         },
         "power": {
             "valueDefault": 1,
