@@ -43,7 +43,7 @@ FullScreenMario.FullScreenMario.settings.statistics = {
         "score": {
             "valueDefault": 0,
             "digits": 6,
-            "hasElement": true,
+            // "hasElement": true,
             "modularity": 100000,
             "onModular": function (EightBitter) {
                 EightBitter.gainLife();
