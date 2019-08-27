@@ -786,7 +786,7 @@ module AudioPlayr {
          * @return {Boolean} Whether the sound was able to play.
          */
         private playSound(sound: HTMLAudioElement): boolean {
-            if (sound && sound.play) {
+            if (sound && sound.play && !this.getMuted()) {
                 sound.play();
                 return true;
             }
