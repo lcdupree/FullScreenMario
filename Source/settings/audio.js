@@ -32,18 +32,18 @@ FullScreenMario.FullScreenMario.settings.audio = {
             "You Dead"
         ],
         "Themes": [
-            "Castle",
-            "Overworld",
-            "Underwater",
-            "Underworld",
-            "Star",
-            "Sky",
-            "Hurry Castle",
-            "Hurry Overworld",
-            "Hurry Underwater",
-            "Hurry Underworld",
-            "Hurry Star",
-            "Hurry Sky"
+            // "Castle",
+            // "Overworld",
+            // "Underwater",
+            // "Underworld",
+            // "Star",
+            // "Sky",
+            // "Hurry Castle",
+            // "Hurry Overworld",
+            // "Hurry Underwater",
+            // "Hurry Underworld",
+            // "Hurry Star",
+            // "Hurry Sky"
         ]
     }
 }

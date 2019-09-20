@@ -41,6 +41,7 @@ declare module UserWrappr {
         export interface ISchema {
             generator: string;
             title: string;
+            isEnclosed?: boolean;
         }
 
         export interface IOption {
@@ -855,6 +856,8 @@ module UserWrappr {
             this.generators = {
                 OptionsButtons: new UISchemas.OptionsButtonsGenerator(this),
                 OptionsTable: new UISchemas.OptionsTableGenerator(this),
+                ControlKeys: new UISchemas.ControlKeysGenerator(this),
+                ActionButtons: new UISchemas.ActionButtonsGenerator(this),
                 LevelEditor: new UISchemas.LevelEditorGenerator(this),
                 MapsGrid: new UISchemas.MapsGridGenerator(this)
             };
@@ -892,44 +895,50 @@ module UserWrappr {
          * @return {HTMLDivElement}
          */
         private loadControlDiv(schema: UISchemas.ISchema): HTMLDivElement {
-            let control: HTMLDivElement = document.createElement("div"),
-                heading: HTMLHeadingElement = document.createElement("h4"),
-                inner: HTMLDivElement = document.createElement("div");
+            if (schema.isEnclosed === false) {
+                return this.generators[schema.generator].generate(schema, this.settings);
 
-            // set the control element ID and CSS classes
-            control.id = "control-" + schema.title;
-            control.className = (this.settings.gameElementControlSectionClass ? this.settings.gameElementControlSectionClass + " " : "") + "control";
+            } else {
+                let control: HTMLDivElement = document.createElement("div"),
+                    heading: HTMLHeadingElement = document.createElement("h4"),
+                    inner: HTMLDivElement = document.createElement("div");
 
-            // set heading CSS classes?
-            if (this.settings.gameElementControlSectionHeadingClass) {
-                heading.className = this.settings.gameElementControlSectionHeadingClass;
+                // set the control element ID and CSS classes
+                control.id = "control-" + schema.title;
+                control.className = (this.settings.gameElementControlSectionClass ? this.settings.gameElementControlSectionClass + " " : "") + "control";
+
+                // set heading CSS classes?
+                if (this.settings.gameElementControlSectionHeadingClass) {
+                    heading.className = this.settings.gameElementControlSectionHeadingClass;
+                }
+
+                heading.textContent = schema.title;
+
+                control.appendChild(heading);
+
+                // set the inner element CSS classes and generate the inner elements
+                inner.className = (this.settings.gameElementControlSectionInnerClass ? this.settings.gameElementControlSectionInnerClass + " " : "") + "control-inner";
+                inner.appendChild(this.generators[schema.generator].generate(schema, this.settings));
+
+                // insert the heading and inner elements into the control container
+                control.appendChild(inner);
+
+                // Touch events often propagate to children before the control div has
+                // been fully extended. Setting the "active" attribute fixes that.
+                control.onmouseover = setTimeout.bind(
+                    undefined,
+                    function (): void {
+                        control.setAttribute("active", "on");
+                    },
+                    35
+                );
+
+                control.onmouseout = function (): void {
+                    control.setAttribute("active", "off");
+                };
+
+                return control;
             }
-
-            heading.textContent = schema.title;
-
-            // set the inner element CSS classes and generate the inner elements
-            inner.className = (this.settings.gameElementControlSectionInnerClass ? this.settings.gameElementControlSectionInnerClass + " " : "") + "control-inner";
-            inner.appendChild(this.generators[schema.generator].generate(schema, this.settings));
-
-            // insert the heading and inner elements into the control container
-            control.appendChild(heading);
-            control.appendChild(inner);
-
-            // Touch events often propagate to children before the control div has
-            // been fully extended. Setting the "active" attribute fixes that.
-            control.onmouseover = setTimeout.bind(
-                undefined,
-                function (): void {
-                    control.setAttribute("active", "on");
-                },
-                35
-            );
-
-            control.onmouseout = function (): void {
-                control.setAttribute("active", "off");
-            };
-
-            return control;
         }
     }
 
@@ -1546,6 +1555,187 @@ module UserWrappr {
                         }
                     }
                 }
+            }
+        }
+
+        /**
+         * Options generator for a display of game keyboard shortcuts.
+         */
+        export class ControlKeysGenerator extends AbstractOptionsGenerator implements IOptionsGenerator {
+            protected optionTypes: IOptionsTableTypes = {
+                "Keys": this.setKeyInput,
+            };
+
+            generate(schema: IOptionsTableSchema): HTMLDivElement {
+                var output: HTMLDivElement = document.createElement("div"),
+                    table: HTMLDListElement = document.createElement("dl"),
+                    option: IOptionsTableOption,
+                    label: HTMLElement,
+                    input: HTMLElement,
+                    child: IInputElement | ISelectElement,
+                    i: number;
+
+                output.className = "control-keys";
+
+                if (schema.options) {
+                    for (i = 0; i < schema.options.length; i += 1) {
+                        input = document.createElement("dt");
+                        label = document.createElement("dd");
+
+                        option = schema.options[i];
+
+                        label.className = "options-label-" + option.type;
+                        label.textContent = option.title;
+
+                        input.className = "options-cell-" + option.type;
+
+                        child = this.optionTypes[schema.options[i].type].call(this, input, option, schema);
+                        if (option.storeLocally) {
+                            this.ensureLocalStorageValue(child, option, schema);
+                        }
+
+                        table.appendChild(input);
+                        table.appendChild(label);
+                    }
+                }
+
+                output.appendChild(table);
+
+                return output;
+            }
+
+            protected setKeyInput(input: IInputElement, details: IOptionsTableKeysOption, schema: ISchema): ISelectElement[] {
+                var values: string = details.source.call(this, this.GameStarter),
+                    children: ISelectElement[] = [],
+                    child: ISelectElement,
+                    scope: ControlKeysGenerator = this,
+                    i: number,
+                    j: number;
+
+                // define display replacements for certain keys
+                var mapObj = {
+                    left: "\u25C0",
+                    right: "\u25B6",
+                    up: "\u25B2",
+                    down: "\u25BC",
+                };
+                var re = new RegExp(Object.keys(mapObj).join("|"),"gi");
+
+                for (i = 0; i < values.length; i += 1) {
+                    child = <ISelectElement>document.createElement("select");
+                    child.className = "options-key-option";
+
+                    for (j = 0; j < this.UserWrapper.getAllPossibleKeys().length; j += 1) {
+                        child.appendChild(
+                            new Option(
+                                this.UserWrapper.getAllPossibleKeys()[j].replace(re, function(matched){
+                                    return mapObj[matched];
+                                }),
+                                this.UserWrapper.getAllPossibleKeys()[j]
+                            )
+                        );
+                    }
+
+                    child.value = child.valueOld = values[i].toLowerCase();
+
+                    child.onchange = (function (child: ISelectElement): void {
+                        details.callback.call(scope, scope.GameStarter, child.valueOld, child.value);
+                        if (details.storeLocally) {
+                            scope.storeLocalStorageValue(child, child.value);
+                        }
+                    }).bind(undefined, child);
+
+                    children.push(child);
+                    input.appendChild(child);
+                }
+
+                return children;
+            }
+        }
+
+        /**
+         * Circular toggle buttons generator for game options.
+         */
+        export class ActionButtonsGenerator extends AbstractOptionsGenerator implements IOptionsGenerator {
+            protected optionTypes: IOptionsTableTypes = {
+                "Boolean": this.setBooleanInput,
+            };
+
+            generate(schema: IOptionsTableSchema): HTMLDivElement {
+                var output: HTMLDivElement = document.createElement("div"),
+                    table: HTMLDListElement = document.createElement("dl"),
+                    option: IOptionsTableOption,
+                    label: HTMLElement,
+                    input: HTMLElement,
+                    child: IInputElement | ISelectElement,
+                    i: number;
+
+                output.className = "action-buttons";
+
+                if (schema.options) {
+                    for (i = 0; i < schema.options.length; i += 1) {
+                        input = document.createElement("dt");
+                        label = document.createElement("dd");
+
+                        option = schema.options[i];
+
+                        label.className = "options-label-" + option.type;
+                        label.textContent = option.title;
+
+                        input.className = "options-cell-" + option.type;
+
+                        child = this.optionTypes[schema.options[i].type].call(this, input, option, schema);
+                        if (option.storeLocally) {
+                            this.ensureLocalStorageValue(child, option, schema);
+                        }
+
+                        table.appendChild(label);
+                        table.appendChild(input);
+                    }
+                }
+
+                output.appendChild(table);
+
+                return output;
+            }
+
+            protected setBooleanInput(input: IInputElement, details: IOptionsTableBooleanOption, schema: ISchema): IInputElement {
+                var status: boolean = details.source.call(this, this.GameStarter),
+                    statusClass: string = status ? "enabled" : "disabled",
+                    scope: ActionButtonsGenerator = this;
+
+                input.className = "select-option options-button-option option-" + statusClass;
+                input.textContent = status ? "on" : "off";
+
+                input.onclick = function (): void {
+                    input.setValue(input.textContent === "off");
+                };
+
+                input.setValue = function (newStatus: string | boolean): void {
+                    if (newStatus.constructor === String) {
+                        if (newStatus === "false" || newStatus === "off") {
+                            newStatus = false;
+                        } else if (newStatus === "true" || newStatus === "on") {
+                            newStatus = true;
+                        }
+                    }
+
+                    if (newStatus) {
+                        details.enable.call(scope, scope.GameStarter);
+                        input.textContent = "on";
+                        input.className = input.className.replace("disabled", "enabled");
+                    } else {
+                        details.disable.call(scope, scope.GameStarter);
+                        input.textContent = "off";
+                        input.className = input.className.replace("enabled", "disabled");
+                    }
+
+                    if (details.storeLocally) {
+                        scope.storeLocalStorageValue(input, newStatus.toString());
+                    }
+                };
+
+                return input;
             }
         }
     }

@@ -54,13 +54,13 @@ FullScreenMario.FullScreenMario.settings.statistics = {
             "digits": 3,
             //"hasElement": true,
             "minimum": 0,
-            "triggers": {
-                "100": function (EightBitter) {
-                    if (!EightBitter.MapScreener.notime) {
-                        EightBitter.AudioPlayer.playThemePrefixed("Hurry");
-                    }
-                }
-            },
+            // "triggers": {
+            //     "100": function (EightBitter) {
+            //         if (!EightBitter.MapScreener.notime) {
+            //             EightBitter.AudioPlayer.playThemePrefixed("Hurry");
+            //         }
+            //     }
+            // },
             "onMinimum": function (EightBitter) {
                 EightBitter.killPlayer(EightBitter.player, true);
             }

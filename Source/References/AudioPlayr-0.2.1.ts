@@ -536,35 +536,36 @@ module AudioPlayr {
          * @return {HTMLAudioElement} The theme's <audio> element, now playing.
          */
         playTheme(name: string = undefined, loop: boolean = undefined): HTMLAudioElement {
-            this.pauseTheme();
-
-            // Loop defaults to true
-            loop = typeof loop !== "undefined" ? loop : true;
-
-            // If name isn't given, use the default getter
-            if (typeof (name) === "undefined") {
-                switch (this.getThemeDefault.constructor) {
-                    case Function:
-                        name = this.getThemeDefault();
-                        break;
-                    default:
-                        name = this.getThemeDefault;
-                        break;
-                }
-            }
-
-            // If a theme already exists, kill it
-            if (typeof this.theme !== "undefined" && this.theme.hasAttribute("name")) {
-                delete this.sounds[this.theme.getAttribute("name")];
-            }
-
-            this.theme = this.sounds[name] = this.play(name);
-            this.theme.loop = loop;
-
-            // If it's used (no repeat), add the event listener to resume theme
-            if (this.theme.getAttribute("used") === "1") {
-                this.theme.addEventListener("ended", this.playTheme.bind(this));
-            }
+            // MOD: turn off theme music
+            // this.pauseTheme();
+            //
+            // // Loop defaults to true
+            // loop = typeof loop !== "undefined" ? loop : true;
+            //
+            // // If name isn't given, use the default getter
+            // if (typeof (name) === "undefined") {
+            //     switch (this.getThemeDefault.constructor) {
+            //         case Function:
+            //             name = this.getThemeDefault();
+            //             break;
+            //         default:
+            //             name = this.getThemeDefault;
+            //             break;
+            //     }
+            // }
+            //
+            // // If a theme already exists, kill it
+            // if (typeof this.theme !== "undefined" && this.theme.hasAttribute("name")) {
+            //     delete this.sounds[this.theme.getAttribute("name")];
+            // }
+            //
+            // this.theme = this.sounds[name] = this.play(name);
+            // this.theme.loop = loop;
+            //
+            // // If it's used (no repeat), add the event listener to resume theme
+            // if (this.theme.getAttribute("used") === "1") {
+            //     this.theme.addEventListener("ended", this.playTheme.bind(this));
+            // }
 
             return this.theme;
         }

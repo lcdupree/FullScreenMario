@@ -723,9 +723,7 @@ module FullScreenMario {
          * @param {Player} player
          */
         keyUpPause(player: IPlayer, event?: Event): void {
-            if (player.FSM.GamesRunner.getPaused()) {
-                player.FSM.GamesRunner.play();
-            }
+            player.FSM.GamesRunner.togglePause();
             player.FSM.ModAttacher.fireEvent("onKeyUpPause");
 
             event.preventDefault();
@@ -6877,7 +6875,9 @@ module FullScreenMario {
             FSM.TimeHandler.addEventInterval(FSM.maintainScenery, 350, Infinity, FSM);
 
             FSM.AudioPlayer.clearAll();
-            FSM.AudioPlayer.playTheme();
+
+            // MOD: turn off theme music
+            // FSM.AudioPlayer.playTheme();
 
             FSM.QuadsKeeper.resetQuadrants();
 

@@ -156,8 +156,8 @@ FullScreenMario.FullScreenMario.settings.ui = {
     "sizeDefault": "Burner",
     "sizes": {
         "Burner": {
-            "width": 512,
-            "height": 464,
+            "width": 794,
+            "height": 480,
             "full": false
         },
         "Wide": {
@@ -168,8 +168,48 @@ FullScreenMario.FullScreenMario.settings.ui = {
     },
     "schemas": [
         {
+            "title": "Controls",
+            "isEnclosed": false,
+            "generator": "ControlKeys",
+            "options": (function (controls) {
+                return controls.map(function (title) {
+                    var keyName, displayName;
+
+                    if (typeof title === 'object') {
+                        keyName = title[0];
+                        displayName = title[1];
+
+                    } else {
+                        keyName = title;
+                        displayName = title;
+                    }
+
+                    return {
+                        "title": displayName[0].toUpperCase() + displayName.substr(1),
+                        "type": "Keys",
+                        "storeLocally": true,
+                        "source": function (GameStarter) {
+                            return GameStarter.InputWriter
+                                .getAliasAsKeyStrings(keyName)
+                                .map(function (string) {
+                                    return string.toLowerCase();
+                                });
+                        },
+                        "callback": function (GameStarter, valueOld, valueNew) {
+                            GameStarter.InputWriter.switchAliasValues(
+                                keyName,
+                                [GameStarter.InputWriter.convertKeyStringToAlias(valueOld)],
+                                [GameStarter.InputWriter.convertKeyStringToAlias(valueNew)]
+                            );
+                        }
+                    };
+                });
+            })(["left", "right", ["up", "jump"], "down", "sprint", "pause"])
+        },
+        {
             "title": "Options",
-            "generator": "OptionsTable",
+            "isEnclosed": false,
+            "generator": "ActionButtons",
             "options": [
                 // {
                 //     "title": "Volume",
@@ -255,33 +295,6 @@ FullScreenMario.FullScreenMario.settings.ui = {
             //     }
             // ]
         },
-        {
-            "title": "Controls",
-            "generator": "OptionsTable",
-            "options": (function (controls) {
-                return controls.map(function (title) {
-                    return {
-                        "title": title[0].toUpperCase() + title.substr(1),
-                        "type": "Keys",
-                        "storeLocally": true,
-                        "source": function (GameStarter) {
-                            return GameStarter.InputWriter
-                                .getAliasAsKeyStrings(title)
-                                .map(function (string) {
-                                    return string.toLowerCase();
-                                });
-                        },
-                        "callback": function (GameStarter, valueOld, valueNew) {
-                            GameStarter.InputWriter.switchAliasValues(
-                                title,
-                                [GameStarter.InputWriter.convertKeyStringToAlias(valueOld)],
-                                [GameStarter.InputWriter.convertKeyStringToAlias(valueNew)]
-                            );
-                        }
-                    };
-                });
-            })(["left", "right", "up", "down", "sprint", "pause", "mute"])
-        },
         // {
         //     "title": "Mods!",
         //     "generator": "OptionsButtons",
@@ -298,66 +311,66 @@ FullScreenMario.FullScreenMario.settings.ui = {
         //     "title": "Editor",
         //     "generator": "LevelEditor"
         // },
-        {
-            "title": "Levels",
-            "generator": "MapsGrid",
-            "rangeX": [1, 4],
-            "rangeY": [1, 8],
-            // "extras": {
-            //     "Map Generator!": (function () {
-            //         var shuffle = function (string) {
-            //             return string
-            //                 .split('')
-            //                 // Same function used in browserchoice.eu :)
-            //                 .sort(function () {
-            //                     return 0.5 - Math.random()
-            //                 })
-            //                 .reverse()
-            //                 .join('');
-            //         };
-            //
-            //         var getNewSeed = function () {
-            //             return shuffle(String(new Date().getTime()));
-            //         };
-            //
-            //         return {
-            //             "title": "Map Generator!",
-            //             "callback": function (GameStarter, schema, button, event) {
-            //                 var parent = event.target.parentNode,
-            //                     randomizer = parent.querySelector(".randomInput");
-            //
-            //                 randomizer.value = randomizer.value.replace(/[^\d]/g, '');
-            //                 if (!randomizer.value) {
-            //                     randomizer.value = getNewSeed();
-            //                 }
-            //
-            //                 GameStarter.LevelEditor.disable();
-            //                 GameStarter.NumberMaker.resetFromSeed(randomizer.value);
-            //                 GameStarter.setMap("Random");
-            //
-            //                 if (!randomizer.getAttribute("custom")) {
-            //                     randomizer.value = getNewSeed();
-            //                 }
-            //             },
-            //             "extraElements": [
-            //                 [
-            //                     "input", {
-            //                         "className": "randomInput maps-grid-input",
-            //                         "type": "text",
-            //                         "value": getNewSeed(),
-            //                         "onchange": function (event) {
-            //                             event.target.setAttribute("custom", true)
-            //                         }
-            //                     }
-            //                 ]
-            //             ]
-            //         };
-            //     })()
-            // },
-            "callback": function (GameStarter, schema, button, event) {
-                GameStarter.LevelEditor.disable();
-                GameStarter.setMap(button.getAttribute("value") || button.textContent);
-            }
-        }
+        // {
+        //     "title": "Levels",
+        //     "generator": "MapsGrid",
+        //     "rangeX": [1, 4],
+        //     "rangeY": [1, 8],
+        //     // "extras": {
+        //     //     "Map Generator!": (function () {
+        //     //         var shuffle = function (string) {
+        //     //             return string
+        //     //                 .split('')
+        //     //                 // Same function used in browserchoice.eu :)
+        //     //                 .sort(function () {
+        //     //                     return 0.5 - Math.random()
+        //     //                 })
+        //     //                 .reverse()
+        //     //                 .join('');
+        //     //         };
+        //     //
+        //     //         var getNewSeed = function () {
+        //     //             return shuffle(String(new Date().getTime()));
+        //     //         };
+        //     //
+        //     //         return {
+        //     //             "title": "Map Generator!",
+        //     //             "callback": function (GameStarter, schema, button, event) {
+        //     //                 var parent = event.target.parentNode,
+        //     //                     randomizer = parent.querySelector(".randomInput");
+        //     //
+        //     //                 randomizer.value = randomizer.value.replace(/[^\d]/g, '');
+        //     //                 if (!randomizer.value) {
+        //     //                     randomizer.value = getNewSeed();
+        //     //                 }
+        //     //
+        //     //                 GameStarter.LevelEditor.disable();
+        //     //                 GameStarter.NumberMaker.resetFromSeed(randomizer.value);
+        //     //                 GameStarter.setMap("Random");
+        //     //
+        //     //                 if (!randomizer.getAttribute("custom")) {
+        //     //                     randomizer.value = getNewSeed();
+        //     //                 }
+        //     //             },
+        //     //             "extraElements": [
+        //     //                 [
+        //     //                     "input", {
+        //     //                         "className": "randomInput maps-grid-input",
+        //     //                         "type": "text",
+        //     //                         "value": getNewSeed(),
+        //     //                         "onchange": function (event) {
+        //     //                             event.target.setAttribute("custom", true)
+        //     //                         }
+        //     //                     }
+        //     //                 ]
+        //     //             ]
+        //     //         };
+        //     //     })()
+        //     // },
+        //     "callback": function (GameStarter, schema, button, event) {
+        //         GameStarter.LevelEditor.disable();
+        //         GameStarter.setMap(button.getAttribute("value") || button.textContent);
+        //     }
+        // }
     ]
 };
