@@ -1614,10 +1614,10 @@ module UserWrappr {
 
                 // define display replacements for certain keys
                 var mapObj = {
-                    left: "\u25C0",
-                    right: "\u25B6",
-                    up: "\u25B2",
-                    down: "\u25BC",
+                    left: "\u2190",
+                    right: "\u2192",
+                    up: "\u2191",
+                    down: "\u2193",
                 };
                 var re = new RegExp(Object.keys(mapObj).join("|"),"gi");
 
