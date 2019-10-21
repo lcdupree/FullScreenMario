@@ -6,7 +6,7 @@ FullScreenMario.FullScreenMario.settings.input = {
             "right":  [39],     // right
             "up":     [38],     // up
             "down":   [40],     // down
-            "sprint": [17],     // ctrl
+            "sprint": [16],     // shift
             "pause":  [80],     // p (pause)
             // Mute and Luigi disabled because there's a GUI for them now
             // "mute":   [77],         // m (mute)
