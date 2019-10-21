@@ -184,8 +184,16 @@ FullScreenMario.FullScreenMario.settings.ui = {
                         displayName = title;
                     }
 
+                    // rename control string?
+                    if (displayName === 'sprint') {
+                        displayName = 'Run/Fire';
+                    }
+
+                    // set first letter uppercase
+                    displayName = displayName[0].toUpperCase() + displayName.substr(1);
+
                     return {
-                        "title": displayName[0].toUpperCase() + displayName.substr(1),
+                        "title": displayName,
                         "type": "Keys",
                         "storeLocally": true,
                         "source": function (GameStarter) {
