@@ -23,20 +23,20 @@ FullScreenMario.FullScreenMario.settings.maps = {
         "bottomPlatformMax": function (GameStarter) {
             var area = GameStarter.MapsHandler.getArea(),
                 diff = GameStarter.MapScreener.bottomDeathDifference;
-                
+
             if (!area) {
                 return -1;
             }
-                
+
             return (area.floor + diff) * GameStarter.unitsize;
         },
         "gravity": function (GameStarter) {
             var area = GameStarter.MapsHandler.getArea();
-            
+
             if (area && area.underwater) {
                 return GameStarter.gravity / 2.8;
             }
-            
+
             return GameStarter.gravity;
         }
     },
@@ -89,7 +89,7 @@ FullScreenMario.FullScreenMario.settings.maps = {
                 if (!pattern.length) {
                     continue;
                 }
-                
+
                 // Pattern's last array should previously be ["blank", width]
                 pattern.width = pattern[pattern.length - 1][1];
                 pattern.pop();
@@ -191,17 +191,19 @@ FullScreenMario.FullScreenMario.settings.maps = {
     "library": (function (maps) {
         var library = {},
             i;
-        
+
         for (i = 0; i < maps.length; i += 1) {
             library[maps[i].name] = maps[i];
         }
-        
+
         return library;
     })([
         {
             "name": "1-1",
             "locations": [
                   { "entry": "Plain" },
+                  { "entry": "PipeVertical" },
+                  { "area": 1 },
             ],
             "areas": [
                 {
@@ -236,7 +238,7 @@ FullScreenMario.FullScreenMario.settings.maps = {
                         { "thing": "Brick", "x": 656, "y": 64 },
                         { "thing": "Goomba", "x": 656, "y": 72 },
                         { "macro": "Fill", "thing": "Brick", "x": 664, "y": 64, "xnum": 5, "xwidth": 8 },
-                        { "macro": "Floor", "x": 712, "width": 512 }, 
+                        { "macro": "Floor", "x": 712, "width": 512 },
                         { "macro": "Fill", "thing": "Brick", "x": 728, "y": 64, "xnum": 3, "xwidth": 8 },
                         { "thing": "Brick", "x": 752, "y": 32, "contents": "Coin" },
                         { "thing": "Block", "x": 752, "y": 64 },
@@ -294,9 +296,173 @@ FullScreenMario.FullScreenMario.settings.maps = {
                         { "thing": "Stone", "x": 1488, "y": 48, "height": 48 },
                         { "thing": "Stone", "x": 1496, "y": 56, "height": 56 },
                         { "thing": "Stone", "x": 1504, "y": 64, "height": 64, "width": 16 },
-                        { "macro": "EndOutsideCastle", "x": 1584, "y": 0, "transport": { "map": "1-3" } }
+                        { "macro": "EndOutsideCastle", "x": 1584, "y": 0, "transport": { "map": "1-2" } }
                     ]
-                },
+                }, {
+                    "setting": "Underworld",
+                    "blockBoundaries": true,
+                    "creation": [
+                        { "macro": "Ceiling", "x": 32, "width": 56 },
+                        { "macro": "Floor", "x": 0, "y": 0, "width": 136 },
+                        { "macro": "Fill", "thing": "Brick", "x": 0, "y": 8, "ynum": 11, "yheight": 8 },
+                        { "macro": "Fill", "thing": "Brick", "x": 32, "y": 8, "xnum": 7, "ynum": 3, "xwidth": 8, "yheight": 8 },
+                        { "macro": "Fill", "thing": "Coin", "x": 33, "y": 31, "xnum": 7, "ynum": 2, "xwidth": 8, "yheight": 16 },
+                        { "macro": "Fill", "thing": "Coin", "x": 41, "y": 63, "xnum": 5, "ynum": 1, "xwidth": 8 },
+                        { "thing": "PipeHorizontal", "x": 104, "y": 16, "transport": 1, "width": 16 },
+                        { "thing": "PipeVertical", "x": 120, "y": 88, "height": 88 }
+                    ]
+                }
+            ]
+        }, {
+            "name": "1-2",
+            "locations": [
+                { "entry": "Walking" },
+                { "area": 1 },
+                { "area": 2 },
+                { "area": 1, "entry": "PipeVertical" },
+                { "area": 3, "entry": "PipeVertical" },
+                { "area": 1 }
+            ],
+            "areas": [
+                {
+                    "setting": "Overworld",
+                    "blockBoundaries": true,
+                    "creation": [
+                        { "macro": "Pattern", "pattern": "BackCloud", "y": 4, "repeat": 1 },
+                        { "macro": "Floor", "width": 192 },
+                        { "macro": "CastleSmall" },
+                        { "thing": "PipeHorizontal", "x": 80, "y": 16, "transport": 1 },
+                        { "macro": "Pipe", "x": 96, "height": 32 }
+                    ]
+                }, {
+                    "setting": "Underworld",
+                    "blockBoundaries": true,
+                    "creation": [
+                        { "macro": "Floor", "width": 640 },
+                        { "macro": "Fill", "thing": "Brick", "y": 8, "ynum": 11 },
+                        { "macro": "Ceiling", "x": 48, "width": 664 },
+                        { "thing": "Block", "x": 80, "y": 32, "contents": "Mushroom" },
+                        { "macro": "Fill", "thing": "Block", "x": 88, "y": 32, "xnum": 4 },
+                        { "thing": "Goomba", "x": 128, "y": 8 },
+                        { "thing": "Stone", "x": 136, "y": 8 },
+                        { "thing": "Goomba", "x": 136, "y": 16 },
+                        { "thing": "Stone", "x": 152, "y": 16, "height": 16 },
+                        { "thing": "Stone", "x": 168, "y": 24, "height": 24 },
+                        { "thing": "Stone", "x": 184, "y": 32, "height": 32 },
+                        { "thing": "Stone", "x": 200, "y": 32, "height": 32 },
+                        { "thing": "Stone", "x": 216, "y": 24, "height": 24 },
+                        { "thing": "Goomba", "x": 232, "y": 8 },
+                        { "thing": "Brick", "x": 232, "y": 40, "contents": "Coin" },
+                        { "thing": "Stone", "x": 248, "y": 24, "height": 24 },
+                        { "thing": "Stone", "x": 264, "y": 16, "height": 16 },
+                        { "macro": "Fill", "thing": "Brick", "x": 312, "y": 32, "ynum": 3 },
+                        { "thing": "Brick", "x": 320, "y": 32 },
+                        { "thing": "Coin", "x": 321, "y": 39 },
+                        { "macro": "Fill", "thing": "Brick", "x": 328, "y": 32, "ynum": 3 },
+                        { "macro": "Fill", "thing": "Coin", "x": 330, "y": 60, "xnum": 4, "xwidth": 8 },
+                        { "thing": "Brick", "x": 336, "y": 48 },
+                        { "thing": "Brick", "x": 344, "y": 48 },
+                        { "macro": "Fill", "thing": "Koopa", "x": 352, "y": 12, "xnum": 2, "xwidth": 12 },
+                        { "macro": "Fill", "thing": "Brick", "x": 352, "y": 32, "ynum": 3 },
+                        { "thing": "Brick", "x": 360, "y": 32 },
+                        { "thing": "Coin", "x": 361, "y": 39 },
+                        { "macro": "Fill", "thing": "Brick", "x": 368, "y": 32, "ynum": 2 },
+                        { "thing": "Brick", "x": 368, "y": 48, "contents": "Star" },
+                        { "macro": "Fill", "thing": "Brick", "x": 416, "y": 32, "xnum": 2, "ynum": 5 },
+                        { "macro": "Fill", "thing": "Brick", "x": 432, "y": 16, "xnum": 2, "ynum": 3 },
+                        { "macro": "Fill", "thing": "Brick", "x": 432, "y": 72, "xnum": 2, "ynum": 2 },
+                        { "macro": "Fill", "thing": "Brick", "x": 464, "y": 32, "xnum": 4, "ynum": 1 },
+                        { "macro": "Fill", "thing": "Brick", "x": 464, "y": 72, "xnum": 5, "ynum": 2 },
+                        { "macro": "Fill", "thing": "Coin", "x": 465, "y": 39, "xnum": 4, "xwidth": 8 },
+                        { "thing": "Koopa", "x": 472, "y": 12 },
+                        { "macro": "Fill", "thing": "Brick", "x": 496, "y": 32, "xnum": 2, "ynum": 7 },
+                        { "thing": "Goomba", "x": 494, "y": 8 },
+                        { "thing": "Goomba", "x": 510, "y": 8 },
+                        { "macro": "Fill", "thing": "Brick", "x": 528, "y": 72, "xnum": 4, "ynum": 2 },
+                        { "macro": "Fill", "thing": "Brick", "x": 536, "y": 32, "ynum": 5 },
+                        { "macro": "Fill", "thing": "Brick", "x": 544, "y": 32, "xnum": 2 },
+                        { "thing": "Coin", "x": 545, "y": 39 },
+                        { "thing": "Brick", "x": 552, "y": 40, "contents": "Mushroom" },
+                        { "macro": "Fill", "thing": "Brick", "x": 576, "y": 32, "xnum": 2 },
+                        { "thing": "Brick", "x": 576, "y": 40 },
+                        { "macro": "Fill", "thing": "Brick", "x": 576, "y": 48, "xnum": 2, "ynum": 3 },
+                        { "thing": "Brick", "x": 584, "y": 40, "contents": "Coin" },
+                        { "thing": "Goomba", "x": 584, "y": 72 },
+                        { "macro": "Fill", "thing": "Brick", "x": 608, "y": 32, "xnum": 4 },
+                        { "macro": "Fill", "thing": "Goomba", "x": 608, "y": 40, "xnum": 2, "xwidth": 12 },
+                        { "macro": "Fill", "thing": "Brick", "x": 608, "y": 72, "xnum": 4, "ynum": 2 },
+                        { "macro": "Floor", "x": 664, "width": 272 },
+                        { "macro": "Fill", "thing": "Brick", "x": 672, "y": 40, "xnum": 6, "ynum": 2 },
+                        { "macro": "Fill", "thing": "Coin", "x": 674, "y": 64, "xnum": 6, "xwidth": 8 },
+                        { "thing": "Brick", "x": 712, "y": 88, "contents": "Mushroom1Up" },
+                        { "macro": "Ceiling", "x": 720, "width": 360 },
+                        { "macro": "Fill", "thing": "Goomba", "x": 768, "y": 8, "xnum": 3, "xwidth": 12 },
+                        { "macro": "Pipe", "x": 800, "height": 24, "piranha": true, "transport": 2 },
+                        { "macro": "Pipe", "x": 848, "height": 32, "piranha": true },
+                        { "thing": "Goomba", "x": 872, "y": 8 },
+                        { "macro": "Pipe", "x": 896, "height": 16, "piranha": true, "entrance": 3 },
+                        { "macro": "Floor", "x": 952, "width": 16 },
+                        { "macro": "Fill", "thing": "Brick", "x": 952, "y": 8, "xnum": 2, "ynum": 3 },
+                        { "macro": "Floor", "x": 984, "width": 96 },
+                        { "thing": "Stone", "x": 1040, "y": 8 },
+                        { "thing": "Stone", "x": 1048, "y": 16, "height": 16 },
+                        { "thing": "Stone", "x": 1056, "y": 24, "height": 24 },
+                        { "thing": "Goomba", "x": 1056, "y": 32 },
+                        { "thing": "Stone", "x": 1064, "y": 32, "height": 32 },
+                        { "thing": "Goomba", "x": 1064, "y": 48 },
+                        { "thing": "Stone", "x": 1072, "y": 32, "height": 32 },
+                        { "macro": "PlatformGenerator", "x": 1096, "width": 24 },
+                        { "macro": "Floor", "x": 1144, "width": 64 },
+                        { "macro": "Fill", "thing": "Brick", "x": 1144, "y": 40, "xnum": 5, "ynum": 1 },
+                        { "thing": "Koopa", "x": 1152, "y": 12, "smart": true },
+                        { "thing": "Brick", "x": 1184, "y": 40, "contents": "Mushroom" },
+                        { "macro": "PlatformGenerator", "x": 1224, "width": 24, "direction": -1 },
+                        { "macro": "Floor", "x": 1264,  "width": 256 },
+                        { "macro": "Fill", "thing": "Brick", "x": 1264, "y": 8, "xnum": 17, "ynum": 3 },
+                        { "thing": "PipeHorizontal", "x": 1312, "y": 40, "transport": 4 },
+                        { "thing": "PipeVertical", "x": 1328, "y": 88, "height": 64 },
+                        { "thing": "ScrollEnabler", "x": 1328, "y": 120, "height": 48 },
+                        { "macro": "Ceiling", "x": 1272, "width": 56 },
+                        { "macro": "Fill", "thing": "Brick", "x": 1344, "y": 32, "xnum": 7, "ynum": 7 },
+                        { "macro": "Ceiling", "x": 1344, "width": 136 },
+                        { "thing": "ScrollBlocker", "x": 1344 },
+                        { "macro": "WarpWorld", "x": 1400, "warps": [4, 3, 2] },
+                        { "macro": "Fill", "thing": "Brick", "x": 1504, "y": 8, "xnum": 2, "ynum": 11 },
+                        { "thing": "ScrollBlocker", "x": 1518, "y": 8 }
+                    ]
+                }, {
+                    "setting": "Underworld",
+                    "blockBoundaries": true,
+                    "creation": [
+                        { "macro": "Floor", "width": 136 },
+                        { "macro": "Fill", "thing": "Brick", "y": 8, "ynum": 11 },
+                        { "macro": "Fill", "thing": "Brick", "x": 24, "y": 32, "xnum": 9 },
+                        { "macro": "Fill", "thing": "Brick", "x": 24, "y": 64, "xnum": 10, "ynum": 4 },
+                        { "macro": "Fill", "thing": "Coin", "x": 25, "y": 7, "xnum": 9, "xwidth": 8 },
+                        { "macro": "Fill", "thing": "Coin", "x": 33, "y": 39, "xnum": 8, "xwidth": 8 },
+                        { "thing": "Brick", "x": 96, "y": 32, "contents": "Coin" },
+                        { "macro": "Fill", "thing": "Brick", "x": 104, "y": 24, "xnum": 2, "ynum": 9 },
+                        { "thing": "PipeHorizontal", "x": 104, "y": 16, "transport": 3 },
+                        { "thing": "PipeVertical", "x": 120, "y": 100, "height": 100 }
+                    ]
+                }, {
+                    "setting": "Overworld",
+                    "blockBoundaries": true,
+                    "creation": [
+                        { "macro": "Floor", "width": 464 },
+                        { "macro": "Pipe", "height": 16, "piranha": true, "entrance": 4 },
+                        { "macro": "Pattern", "pattern": "BackRegular", "x": 104, },
+                        { "thing": "Stone", "x": 16, "y": 8 },
+                        { "thing": "Stone", "x": 24, "y": 16, "height": 16 },
+                        { "thing": "Stone", "x": 32, "y": 24, "height": 24 },
+                        { "thing": "Stone", "x": 40, "y": 32, "height": 32 },
+                        { "thing": "Stone", "x": 48, "y": 40, "height": 40 },
+                        { "thing": "Stone", "x": 56, "y": 48, "height": 48 },
+                        { "thing": "Stone", "x": 64, "y": 56, "height": 56 },
+                        { "thing": "Stone", "x": 72, "y": 64, "height": 64, "width": 16 },
+                        { "macro": "EndOutsideCastle", "x": 152, "transport": { "map": "1-3" } }
+                    ]
+                }
             ]
         }, {
             "name": "1-3",
@@ -354,17 +520,68 @@ FullScreenMario.FullScreenMario.settings.maps = {
                         { "thing": "Stone", "x": 1104, "y": 32, "width": 16, "height": 32 },
                         { "thing": "Stone", "x": 1120, "y": 48, "width": 16, "height": 48 },
                         { "thing": "Stone", "x": 1136, "y": 64, "width": 16, "height": 64 },
-                        { "macro": "EndOutsideCastle", "x": 1224, "large": true, "walls": 12, "transport": { "map": "2-1" } }
+                        { "macro": "EndOutsideCastle", "x": 1224, "large": true, "walls": 12, "transport": { "map": "1-4" } }
+                    ]
+                }
+            ]
+        }, {
+            "name": "1-4",
+            "time": 300,
+            "locations": [
+                { "entry": "Castle" }
+            ],
+            "areas": [
+                {
+                    "setting": "Castle",
+                    "blockBoundaries": true,
+                    "creation": [
+                        { "macro": "StartInsideCastle", "width": 104 },
+                        { "thing": "Stone", "y": 88, "width": 192, "height": 24 },
+                        { "macro": "Water", "x": 104, "y": 8, "width": 24 },
+                        { "macro": "Floor", "x": 120, "y": 24, "width": 88 },
+                        { "thing": "Stone", "x": 184, "y": 64 },
+                        { "thing": "CastleBlock", "x": 184, "y": 56 },
+                        { "thing": "Stone", "x": 192, "y": 88, "width": 1088 },
+                        { "macro": "Water", "x": 208, "width": 24 },
+                        { "macro": "Floor", "x": 232, "y": 24, "width": 8 },
+                        { "macro": "Floor", "x": 240, "y": 16, "width": 8 },
+                        { "thing": "CastleBlock", "x": 240, "y": 24, "fireballs": 6, "speed": -1 },
+                        { "thing": "Block", "x": 240, "y": 56, "contents": "Mushroom" },
+                        { "macro": "Floor", "x": 248, "y": 24, "width": 8 },
+                        { "macro": "Water", "x": 256, "width": 24 },
+                        { "macro": "Floor", "x": 280, "y": 0, "width": 744 },
+                        { "thing": "Stone", "x": 280, "y": 32, "width": 296 },
+                        { "thing": "Stone", "x": 280, "y": 24, "width": 552, "height": 24 },
+                        { "thing": "Stone", "x": 296, "y": 80, "width": 280, "height": 24 },
+                        { "thing": "CastleBlock", "x": 296, "y": 56 },
+                        { "thing": "CastleBlock", "x": 392, "y": 56, "fireballs": 6 },
+                        { "thing": "CastleBlock", "x": 480, "y": 56, "fireballs": 6 },
+                        { "thing": "CastleBlock", "x": 536, "y": 56, "fireballs": 6 },
+                        { "thing": "CastleBlock", "x": 608, "y": 32, "fireballs": 6 },
+                        { "thing": "CastleBlock", "x": 640, "y": 72 },
+                        { "thing": "Stone", "x": 640, "y": 80 },
+                        { "thing": "CastleBlock", "x": 672, "y": 32, "fireballs": 6 },
+                        { "thing": "CastleBlock", "x": 704, "y": 72, "fireballs": 6, "direction": 1 },
+                        { "thing": "Stone", "x": 704, "y": 80 },
+                        { "thing": "CastleBlock", "x": 736, "y": 32 },
+                        { "thing": "Stone", "x": 776, "y": 80, "width": 56, "height": 16 },
+                        { "macro": "Fill", "thing": "Block", "x": 848, "y": 32, "xnum": 3, "xwidth": 24, "hidden": true },
+                        { "macro": "Fill", "thing": "Block", "x": 856, "y": 64, "xnum": 3, "xwidth": 24, "hidden": true },
+                        { "thing": "Stone", "x": 928, "y": 24, "width": 32, "height": 24 },
+                        { "thing": "Stone", "x": 984, "y": 24, "width": 40, "height": 24 },
+                        { "thing": "Stone", "x": 984, "y": 80, "width": 40, "height": 16 },
+                        { "macro": "EndInsideCastle", "x": 1024, "transport": { "map": "2-1" } },
+                        { "thing": "Platform", "x": 1108, "y": 56, "width": 16, "sliding": true, "begin": 1080, "end": 1112, "nocollidechar": true }
                     ]
                 }
             ]
         }, {
             "name": "2-1",
             "locations": [
-                { "entry": "Plain" }, 
-                { "xloc": 1288 }, 
-                { "entry": "PipeVertical" }, 
-                { "area": 1, "entry": "Vine" }, 
+                { "entry": "Plain" },
+                { "xloc": 1288 },
+                { "entry": "PipeVertical" },
+                { "area": 1, "entry": "Vine" },
                 { "area": 2 }
             ],
             "areas": [
@@ -476,8 +693,8 @@ FullScreenMario.FullScreenMario.settings.maps = {
         }, {
             "name": "2-2",
             "locations": [
-                { "entry": "Walking" }, 
-                { "area": 1 }, 
+                { "entry": "Walking" },
+                { "area": 1 },
                 { "area": 2, "entry": "PipeVertical" }
             ],
             "areas": [
@@ -496,7 +713,7 @@ FullScreenMario.FullScreenMario.settings.maps = {
                     "blockBoundaries": true,
                     "underwater": true,
                     "creation": [
-                        { "macro": "Floor", "width": 536 }, 
+                        { "macro": "Floor", "width": 536 },
                         { "thing": "Coral", "x": 96, "y": 24, "height": 24 },
                         { "macro": "Fill", "thing": "Coin", "x": 121, "y": 7, "xnum": 2, "xwidth": 8 },
                         { "thing": "Stone", "x": 152, "y": 32, "width": 24 },
@@ -724,10 +941,10 @@ FullScreenMario.FullScreenMario.settings.maps = {
         }, {
             "name": "3-1",
             "locations": [
-                { "entry": "Plain" }, 
+                { "entry": "Plain" },
                 { "entry": "PipeVertical" },
-                { "xloc": 1272 }, 
-                { "area": 1 }, 
+                { "xloc": 1272 },
+                { "area": 1 },
                 { "area": 2, "entry": "Vine" }
             ],
             "areas": [
@@ -1055,8 +1272,8 @@ FullScreenMario.FullScreenMario.settings.maps = {
         }, {
             "name": "4-1",
             "locations": [
-                { "entry": "Plain" }, 
-                { "entry": "PipeVertical" }, 
+                { "entry": "Plain" },
+                { "entry": "PipeVertical" },
                 { "area": 1 }
             ],
             "areas": [
@@ -1128,11 +1345,11 @@ FullScreenMario.FullScreenMario.settings.maps = {
         }, {
             "name": "4-2",
             "locations": [
-                { "entry": "Walking" }, 
-                { "area": 1 }, 
-                { "area": 1, "entry": "PipeVertical" }, 
-                { "area": 2 }, 
-                { "area": 3, "entry": "PipeVertical" }, 
+                { "entry": "Walking" },
+                { "area": 1 },
+                { "area": 1, "entry": "PipeVertical" },
+                { "area": 2 },
+                { "area": 3, "entry": "PipeVertical" },
                 { "area": 4, "entry": "Vine" }
             ],
             "areas": [
@@ -1252,7 +1469,7 @@ FullScreenMario.FullScreenMario.settings.maps = {
                         { "macro": "Ceiling", "x": 32, "width": 56 },
                         { "macro": "Floor", "width": 136 },
                         { "macro": "Fill", "thing": "Brick", "y": 8, "ynum": 11 },
-                        { "macro": "Fill", "thing": "Brick", "x": 32, "y": 48, "xnum": 7 }, 
+                        { "macro": "Fill", "thing": "Brick", "x": 32, "y": 48, "xnum": 7 },
                         { "thing": "Brick", "x": 32, "y": 56 },
                         { "macro": "Fill", "thing": "Coin", "x": 42, "y": 55, "xnum": 5, "ynum": 2, "xwidth": 8, "yheight": 8 },
                         { "macro": "Fill", "thing": "Brick", "x": 80, "y": 56, "ynum": 4 },
@@ -1489,7 +1706,7 @@ FullScreenMario.FullScreenMario.settings.maps = {
                         {
                             "before": {
                                 "width": 256,
-                                "creation": [ 
+                                "creation": [
                                     { "macro": "EndInsideCastle", "spawnType": "SpinyEgg", "transport": { "map": "5-1" } }
                                 ]
                             }
@@ -1500,8 +1717,8 @@ FullScreenMario.FullScreenMario.settings.maps = {
         }, {
             "name": "5-1",
             "locations": [
-                { "entry": "Plain" }, 
-                { "entry": "PipeVertical" }, 
+                { "entry": "Plain" },
+                { "entry": "PipeVertical" },
                 { "area": 1 }
             ],
             "areas": [
@@ -1576,10 +1793,10 @@ FullScreenMario.FullScreenMario.settings.maps = {
         }, {
             "name": "5-2",
             "locations": [
-                { "entry": "Plain" }, 
-                { "entry": "PipeVertical" }, 
+                { "entry": "Plain" },
+                { "entry": "PipeVertical" },
                 { "xloc": 1032 },
-                { "area": 1 }, 
+                { "area": 1 },
                 { "area": 2, "entry": "Plain" }
             ],
             "areas": [
@@ -1940,13 +2157,13 @@ FullScreenMario.FullScreenMario.settings.maps = {
         }, {
             "name": "6-2",
             "locations": [
-                { "entry": "Plain" }, 
-                { "entry": "PipeVertical" }, 
+                { "entry": "Plain" },
                 { "entry": "PipeVertical" },
-                { "xloc": 1304 }, 
                 { "entry": "PipeVertical" },
-                { "area": 1 }, 
-                { "area": 2 }, 
+                { "xloc": 1304 },
+                { "entry": "PipeVertical" },
+                { "area": 1 },
+                { "area": 2 },
                 { "area": 3, "entry": "Vine" },
                 { "area": 4 }
             ],
@@ -2247,7 +2464,7 @@ FullScreenMario.FullScreenMario.settings.maps = {
         }, {
             "name": "7-1",
             "locations": [
-                { "entry": "Plain" }, 
+                { "entry": "Plain" },
                 { "entry": "PipeVertical" },
                 { "area": 1 }
             ],
@@ -2339,7 +2556,7 @@ FullScreenMario.FullScreenMario.settings.maps = {
             "name": "7-2",
             "locations": [
                 { "entry": "Walking" },
-                { "area": 1 }, 
+                { "area": 1 },
                 { "area": 2, "entry": "PipeVertical" }
             ],
             "areas": [
@@ -2451,7 +2668,7 @@ FullScreenMario.FullScreenMario.settings.maps = {
                         { "macro": "Pattern", "pattern": "BackRegular", "x": 104 },
                         { "macro": "Floor", "width": 336 },
                         { "macro": "Pipe", "height": 16, "piranha": true, "entrance": 2 },
-                        { "thing": "Stone", "x": 16, "y": 8 }, 
+                        { "thing": "Stone", "x": 16, "y": 8 },
                         { "thing": "Stone", "x": 24, "y": 16, "height": 16 },
                         { "thing": "Stone", "x": 32, "y": 24, "height": 24 },
                         { "thing": "Stone", "x": 40, "y": 32, "height": 32 },
@@ -2765,7 +2982,7 @@ FullScreenMario.FullScreenMario.settings.maps = {
             "name": "8-1",
             "locations": [
                 { "entry": "Plain" },
-                { "entry": "PipeVertical" }, 
+                { "entry": "PipeVertical" },
                 { "area": 1 }
             ],
             "areas": [
@@ -2893,7 +3110,7 @@ FullScreenMario.FullScreenMario.settings.maps = {
         }, {
             "name": "8-2",
             "locations": [
-                { "entry": "Plain" }, 
+                { "entry": "Plain" },
                 { "entry": "PipeVertical" },
                 { "area": 1 }
             ],
@@ -3096,7 +3313,7 @@ FullScreenMario.FullScreenMario.settings.maps = {
             "locations": [
                 { "entry": "Castle" },
                 { "entry": "PipeVertical" },  // 1: Pipe 1
-                { "area": 1, "entry": "PipeVertical" }, // 2: Past B 
+                { "area": 1, "entry": "PipeVertical" }, // 2: Past B
                 { "area": 2, "entry": "PipeVertical" }, // 3: Past C
                 { "area": 3, "entry": "PipeVertical", "xloc": 0 }, // 4: Underwater
                 { "area": 4, "entry": "PipeVertical" } // 5: Past E

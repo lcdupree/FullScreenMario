@@ -41,6 +41,7 @@ declare module UserWrappr {
         export interface ISchema {
             generator: string;
             title: string;
+            isEnclosed?: boolean;
         }
 
         export interface IOption {
@@ -148,7 +149,7 @@ declare module UserWrappr {
     }
 
     export interface IOptionsGenerator {
-        generate: (schema: UISchemas.ISchema) => HTMLDivElement;
+        generate: (schema: UISchemas.ISchema, settings: IUserWrapprSettings) => HTMLDivElement;
     }
 
     export interface IUserWrapprSizeSummary {
@@ -169,6 +170,11 @@ declare module UserWrappr {
         allPossibleKeys?: string[];
         gameElementSelector?: string;
         gameControlsSelector?: string;
+        gameElementControlWrapperClass?: string,
+        gameElementControlSectionClass?: string,
+        gameElementControlSectionHeadingClass?: string,
+        gameElementControlSectionInnerClass?: string,
+        gameElementControlOptionsGridClass?: string,
         log?: (...args: any[]) => void;
         customs?: GameStartr.IGameStartrCustoms;
         styleSheet?: StyleSheet;
@@ -252,7 +258,7 @@ module UserWrappr {
         private helpSettings: IGameStartrUIHelpSettings;
 
         /**
-         * What the global object is called (typically "window" for browser 
+         * What the global object is called (typically "window" for browser
          * environments and "global" for node-style environments).
          */
         private globalName: string;
@@ -377,7 +383,7 @@ module UserWrappr {
          * Resets the internal GameStarter by storing it under window, adding
          * InputWritr pipes for input to the page, creating the HTML buttons,
          * and setting additional CSS styles and page visiblity.
-         * 
+         *
          * @param {IUserWrapprSettings} settings
          * @param {GameStartr.IGameStartrCustoms} customs
          */
@@ -543,7 +549,7 @@ module UserWrappr {
          * Sets the size of the GameStartr by resetting the game with the size
          * information as part of its customs object. Full screen status is
          * changed accordingly.
-         * 
+         *
          * @param {Mixed} The size to set, as a String to retrieve the size from
          *                known info, or a container of settings.
          */
@@ -607,7 +613,7 @@ module UserWrappr {
 
         /**
          * Displays the summary for a help group of the given optionName.
-         * 
+         *
          * @param {String} optionName   The help group to display the summary of.
          */
         displayHelpGroupSummary(optionName: string): void {
@@ -630,7 +636,7 @@ module UserWrappr {
 
         /**
          * Displays the full information on a help group of the given optionName.
-         * 
+         *
          * @param {String} optionName   The help group to display the information of.
          */
         displayHelpOption(optionName: string): void {
@@ -677,7 +683,7 @@ module UserWrappr {
 
         /**
          * Logs a bit of help text, filtered by this.filterHelpText.
-         * 
+         *
          * @param {String} text   The text to be filtered and logged.
          */
         logHelpText(text: string): void {
@@ -694,7 +700,7 @@ module UserWrappr {
 
         /**
          * Ensures a bit of text is of least a certain length.
-         * 
+         *
          * @param {String} text   The text to pad.
          * @param {Number} length   How wide the text must be, at minimum.
          * @return {String} The text with spaces padded to the right.
@@ -716,7 +722,7 @@ module UserWrappr {
         /**
          * Sets the internal this.sizes as a copy of the given sizes, but with
          * names as members of every size summary.
-         * 
+         *
          * @param {Object} sizes   The listing of preset sizes to go by.
          */
         private importSizes(sizes: { [i: string]: IUserWrapprSizeSummary }): void {
@@ -732,7 +738,7 @@ module UserWrappr {
         }
 
         /**
-         * 
+         *
          */
         private fixCustoms(customsRaw: GameStartr.IGameStartrCustoms): any {
             var customs: GameStartr.IGameStartrCustoms = this.GameStartrConstructor.prototype.proliferate({}, customsRaw);
@@ -764,7 +770,7 @@ module UserWrappr {
         */
 
         /**
-         * Adds a "visibilitychange" handler to the document bound to 
+         * Adds a "visibilitychange" handler to the document bound to
          * this.handleVisibilityChange.
          */
         private resetPageVisibilityHandlers(): void {
@@ -774,7 +780,7 @@ module UserWrappr {
         /**
          * Handles a visibility change event by calling either this.onPageHidden
          * or this.onPageVisible.
-         * 
+         *
          * @param {Event} event
          */
         private handleVisibilityChange(event: Event): void {
@@ -817,7 +823,7 @@ module UserWrappr {
         /**
          * Loads the internal GameStarter, resetting it with the given customs
          * and attaching handlers to document.body and the holder elements.
-         * 
+         *
          * @param {Object} customs   Custom arguments to pass to this.GameStarter.
          */
         private loadGameStarter(customs: GameStartr.IGameStartrCustoms): void {
@@ -850,6 +856,8 @@ module UserWrappr {
             this.generators = {
                 OptionsButtons: new UISchemas.OptionsButtonsGenerator(this),
                 OptionsTable: new UISchemas.OptionsTableGenerator(this),
+                ControlKeys: new UISchemas.ControlKeysGenerator(this),
+                ActionButtons: new UISchemas.ActionButtonsGenerator(this),
                 LevelEditor: new UISchemas.LevelEditorGenerator(this),
                 MapsGrid: new UISchemas.MapsGridGenerator(this)
             };
@@ -858,7 +866,7 @@ module UserWrappr {
         /**
          * Loads the externally facing UI controls and the internal ItemsHolder,
          * appending the controls to the controls HTML element.
-         * 
+         *
          * @param {Object[]} schemas   The schemas each a UI control to be made.
          */
         private loadControls(schemas: UISchemas.ISchema[]): void {
@@ -873,65 +881,80 @@ module UserWrappr {
             });
 
             section.textContent = "";
-            section.className = "length-" + length;
+            section.className = (this.settings.gameElementControlWrapperClass ? this.settings.gameElementControlWrapperClass + " " : "") + "length-" + length;
 
             for (i = 0; i < length; i += 1) {
                 section.appendChild(this.loadControlDiv(schemas[i]));
             }
         }
 
-        /** 
+        /**
          * Creates an individual UI control element based on a UI schema.
-         * 
+         *
          * @param {Object} schema
          * @return {HTMLDivElement}
          */
         private loadControlDiv(schema: UISchemas.ISchema): HTMLDivElement {
-            var control: HTMLDivElement = document.createElement("div"),
-                heading: HTMLHeadingElement = document.createElement("h4"),
-                inner: HTMLDivElement = document.createElement("div");
+            if (schema.isEnclosed === false) {
+                return this.generators[schema.generator].generate(schema, this.settings);
 
-            control.className = "control";
-            control.id = "control-" + schema.title;
+            } else {
+                let control: HTMLDivElement = document.createElement("div"),
+                    heading: HTMLHeadingElement = document.createElement("h4"),
+                    inner: HTMLDivElement = document.createElement("div");
 
-            heading.textContent = schema.title;
+                // set the control element ID and CSS classes
+                control.id = "control-" + schema.title;
+                control.className = (this.settings.gameElementControlSectionClass ? this.settings.gameElementControlSectionClass + " " : "") + "control";
 
-            inner.className = "control-inner";
-            inner.appendChild(this.generators[schema.generator].generate(schema));
+                // set heading CSS classes?
+                if (this.settings.gameElementControlSectionHeadingClass) {
+                    heading.className = this.settings.gameElementControlSectionHeadingClass;
+                }
 
-            control.appendChild(heading);
-            control.appendChild(inner);
+                heading.textContent = schema.title;
 
-            // Touch events often propogate to children before the control div has
-            // been fully extended. Setting the "active" attribute fixes that.
-            control.onmouseover = setTimeout.bind(
-                undefined,
-                function (): void {
-                    control.setAttribute("active", "on");
-                },
-                35);
+                control.appendChild(heading);
 
-            control.onmouseout = function (): void {
-                control.setAttribute("active", "off");
-            };
+                // set the inner element CSS classes and generate the inner elements
+                inner.className = (this.settings.gameElementControlSectionInnerClass ? this.settings.gameElementControlSectionInnerClass + " " : "") + "control-inner";
+                inner.appendChild(this.generators[schema.generator].generate(schema, this.settings));
 
-            return control;
+                // insert the heading and inner elements into the control container
+                control.appendChild(inner);
+
+                // Touch events often propagate to children before the control div has
+                // been fully extended. Setting the "active" attribute fixes that.
+                control.onmouseover = setTimeout.bind(
+                    undefined,
+                    function (): void {
+                        control.setAttribute("active", "on");
+                    },
+                    35
+                );
+
+                control.onmouseout = function (): void {
+                    control.setAttribute("active", "off");
+                };
+
+                return control;
+            }
         }
     }
 
     export module UISchemas {
         /**
          * Base class for options generators. These all store a UserWrapper and
-         * its GameStartr, along with a generate Function 
+         * its GameStartr, along with a generate Function
          */
         export class AbstractOptionsGenerator implements IOptionsGenerator {
             /**
-             * 
+             *
              */
             protected UserWrapper: UserWrappr.UserWrappr;
 
             /**
-             * 
+             *
              */
             protected GameStarter: GameStartr.IGameStartr;
 
@@ -946,19 +969,19 @@ module UserWrappr {
             /**
              * Generates a control element based on the provided schema.
              */
-            generate(schema: ISchema): HTMLDivElement {
+            generate(schema: ISchema, settings: IUserWrapprSettings): HTMLDivElement {
                 throw new Error("AbstractOptionsGenerator is abstract. Subclass it.");
             }
 
             /**
              * Recursively searches for an element with the "control" class
              * that's a parent of the given element.
-             * 
+             *
              * @param {HTMLElement} element
              * @return {HTMLElement}
              */
             protected getParentControlDiv(element: HTMLElement): HTMLElement {
-                if (element.className === "control") {
+                if (element.classList.contains("control")) {
                     return element;
                 } else if (!element.parentNode) {
                     return undefined;
@@ -971,10 +994,10 @@ module UserWrappr {
              * Ensures a child's required local storage value is being stored,
              * and adds it to the internal GameStarter.ItemsHolder if not. If it
              * is, and the child's value isn't equal to it, the value is set.
-             * 
+             *
              * @param {Mixed} childRaw   An input or select element, or an Array
-             *                           thereof. 
-             * @param {Object} details   Details containing the title of the item 
+             *                           thereof.
+             * @param {Object} details   Details containing the title of the item
              *                           and the source Function to get its value.
              * @param {Object} schema   The container schema this child is within.
              */
@@ -1010,11 +1033,11 @@ module UserWrappr {
             }
 
             /**
-             * The equivalent of ensureLocalStorageValue for an entire set of 
+             * The equivalent of ensureLocalStorageValue for an entire set of
              * elements, running the equivalent logic on all of them.
-             * 
+             *
              * @param {Mixed} childRaw   An Array of input or select elements.
-             * @param {Object} details   Details containing the title of the item 
+             * @param {Object} details   Details containing the title of the item
              *                           and the source Function to get its value.
              * @param {Object} schema   The container schema this child is within.
              */
@@ -1052,7 +1075,7 @@ module UserWrappr {
             /**
              * Stores an element's value in the internal GameStarter.ItemsHolder,
              * if it has the "localStorageKey" attribute.
-             * 
+             *
              * @param {HTMLElement} child   An element with a value to store.
              * @param {Mixed} value   What value is to be stored under the key.
              */
@@ -1454,13 +1477,13 @@ module UserWrappr {
          * Options generator for a grid of maps, along with other options.
          */
         export class MapsGridGenerator extends AbstractOptionsGenerator implements IOptionsGenerator {
-            generate(schema: IOptionsMapGridSchema): HTMLDivElement {
-                var output: HTMLDivElement = document.createElement("div");
+            generate(schema: IOptionsMapGridSchema, settings: IUserWrapprSettings): HTMLDivElement {
+                let output: HTMLDivElement = document.createElement("div");
 
                 output.className = "select-options select-options-maps-grid";
 
                 if (schema.rangeX && schema.rangeY) {
-                    output.appendChild(this.generateRangedTable(schema));
+                    output.appendChild(this.generateRangedTable(schema, settings));
                 }
 
                 if (schema.extras) {
@@ -1470,7 +1493,7 @@ module UserWrappr {
                 return output;
             }
 
-            generateRangedTable(schema: IOptionsMapGridSchema): HTMLTableElement {
+            generateRangedTable(schema: IOptionsMapGridSchema, settings: IUserWrapprSettings): HTMLTableElement {
                 var scope: MapsGridGenerator = this,
                     table: HTMLTableElement = document.createElement("table"),
                     rangeX: number[] = schema.rangeX,
@@ -1480,13 +1503,17 @@ module UserWrappr {
                     i: number,
                     j: number;
 
+                if (settings.gameElementControlOptionsGridClass) {
+                    table.className = settings.gameElementControlOptionsGridClass;
+                }
+
                 for (i = rangeY[0]; i <= rangeY[1]; i += 1) {
                     row = document.createElement("tr");
-                    row.className = "maps-grid-row";
+                    row.className = (settings.gameElementControlOptionsGridClass ? settings.gameElementControlOptionsGridClass + "-row " : "") + "maps-grid-row";
 
                     for (j = rangeX[0]; j <= rangeX[1]; j += 1) {
                         cell = document.createElement("td");
-                        cell.className = "select-option maps-grid-option maps-grid-option-range";
+                        cell.className = (settings.gameElementControlOptionsGridClass ? settings.gameElementControlOptionsGridClass + "-row-item " : "") + "select-option maps-grid-option maps-grid-option-range";
                         cell.textContent = i + "-" + j;
                         cell.onclick = (function (callback: () => any): void {
                             if (scope.getParentControlDiv(cell).getAttribute("active") === "on") {
@@ -1528,6 +1555,187 @@ module UserWrappr {
                         }
                     }
                 }
+            }
+        }
+
+        /**
+         * Options generator for a display of game keyboard shortcuts.
+         */
+        export class ControlKeysGenerator extends AbstractOptionsGenerator implements IOptionsGenerator {
+            protected optionTypes: IOptionsTableTypes = {
+                "Keys": this.setKeyInput,
+            };
+
+            generate(schema: IOptionsTableSchema): HTMLDivElement {
+                var output: HTMLDivElement = document.createElement("div"),
+                    table: HTMLDListElement = document.createElement("dl"),
+                    option: IOptionsTableOption,
+                    label: HTMLElement,
+                    input: HTMLElement,
+                    child: IInputElement | ISelectElement,
+                    i: number;
+
+                output.className = "control-keys";
+
+                if (schema.options) {
+                    for (i = 0; i < schema.options.length; i += 1) {
+                        input = document.createElement("dt");
+                        label = document.createElement("dd");
+
+                        option = schema.options[i];
+
+                        label.className = "options-label-" + option.type;
+                        label.textContent = option.title;
+
+                        input.className = "options-cell-" + option.type;
+
+                        child = this.optionTypes[schema.options[i].type].call(this, input, option, schema);
+                        if (option.storeLocally) {
+                            this.ensureLocalStorageValue(child, option, schema);
+                        }
+
+                        table.appendChild(input);
+                        table.appendChild(label);
+                    }
+                }
+
+                output.appendChild(table);
+
+                return output;
+            }
+
+            protected setKeyInput(input: IInputElement, details: IOptionsTableKeysOption, schema: ISchema): ISelectElement[] {
+                var values: string = details.source.call(this, this.GameStarter),
+                    children: ISelectElement[] = [],
+                    child: ISelectElement,
+                    scope: ControlKeysGenerator = this,
+                    i: number,
+                    j: number;
+
+                // define display replacements for certain keys
+                var mapObj = {
+                    left: "\u2190",
+                    right: "\u2192",
+                    up: "\u2191",
+                    down: "\u2193",
+                };
+                var re = new RegExp(Object.keys(mapObj).join("|"),"gi");
+
+                for (i = 0; i < values.length; i += 1) {
+                    child = <ISelectElement>document.createElement("select");
+                    child.className = "options-key-option";
+
+                    for (j = 0; j < this.UserWrapper.getAllPossibleKeys().length; j += 1) {
+                        child.appendChild(
+                            new Option(
+                                this.UserWrapper.getAllPossibleKeys()[j].replace(re, function(matched){
+                                    return mapObj[matched];
+                                }),
+                                this.UserWrapper.getAllPossibleKeys()[j]
+                            )
+                        );
+                    }
+
+                    child.value = child.valueOld = values[i].toLowerCase();
+
+                    child.onchange = (function (child: ISelectElement): void {
+                        details.callback.call(scope, scope.GameStarter, child.valueOld, child.value);
+                        if (details.storeLocally) {
+                            scope.storeLocalStorageValue(child, child.value);
+                        }
+                    }).bind(undefined, child);
+
+                    children.push(child);
+                    input.appendChild(child);
+                }
+
+                return children;
+            }
+        }
+
+        /**
+         * Circular toggle buttons generator for game options.
+         */
+        export class ActionButtonsGenerator extends AbstractOptionsGenerator implements IOptionsGenerator {
+            protected optionTypes: IOptionsTableTypes = {
+                "Boolean": this.setBooleanInput,
+            };
+
+            generate(schema: IOptionsTableSchema): HTMLDivElement {
+                var output: HTMLDivElement = document.createElement("div"),
+                    table: HTMLDListElement = document.createElement("dl"),
+                    option: IOptionsTableOption,
+                    label: HTMLElement,
+                    input: HTMLElement,
+                    child: IInputElement | ISelectElement,
+                    i: number;
+
+                output.className = "action-buttons";
+
+                if (schema.options) {
+                    for (i = 0; i < schema.options.length; i += 1) {
+                        input = document.createElement("dt");
+                        label = document.createElement("dd");
+
+                        option = schema.options[i];
+
+                        label.className = "options-label-" + option.type;
+                        label.textContent = option.title;
+
+                        input.className = "options-cell-" + option.type;
+
+                        child = this.optionTypes[schema.options[i].type].call(this, input, option, schema);
+                        if (option.storeLocally) {
+                            this.ensureLocalStorageValue(child, option, schema);
+                        }
+
+                        table.appendChild(label);
+                        table.appendChild(input);
+                    }
+                }
+
+                output.appendChild(table);
+
+                return output;
+            }
+
+            protected setBooleanInput(input: IInputElement, details: IOptionsTableBooleanOption, schema: ISchema): IInputElement {
+                var status: boolean = details.source.call(this, this.GameStarter),
+                    statusClass: string = status ? "enabled" : "disabled",
+                    scope: ActionButtonsGenerator = this;
+
+                input.className = "select-option options-button-option option-" + statusClass;
+                input.textContent = status ? "on" : "off";
+
+                input.onclick = function (): void {
+                    input.setValue(input.textContent === "off");
+                };
+
+                input.setValue = function (newStatus: string | boolean): void {
+                    if (newStatus.constructor === String) {
+                        if (newStatus === "false" || newStatus === "off") {
+                            newStatus = false;
+                        } else if (newStatus === "true" || newStatus === "on") {
+                            newStatus = true;
+                        }
+                    }
+
+                    if (newStatus) {
+                        details.enable.call(scope, scope.GameStarter);
+                        input.textContent = "on";
+                        input.className = input.className.replace("disabled", "enabled");
+                    } else {
+                        details.disable.call(scope, scope.GameStarter);
+                        input.textContent = "off";
+                        input.className = input.className.replace("enabled", "disabled");
+                    }
+
+                    if (details.storeLocally) {
+                        scope.storeLocalStorageValue(input, newStatus.toString());
+                    }
+                };
+
+                return input;
             }
         }
     }

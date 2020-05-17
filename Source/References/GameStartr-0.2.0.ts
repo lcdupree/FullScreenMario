@@ -1050,6 +1050,18 @@ module GameStartr {
 
             // Mods!
             thing.GameStarter.ModAttacher.fireEvent("onThingMake", thing.GameStarter, thing, title, settings, defaults);
+
+
+            // MOD: enable to output all loaded sprites onto the page
+            // console.log(thing);
+            //
+            // thing.canvas.style.border = "1px solid purple";
+            //
+            // const $title = document.createElement('h1');
+            // $title.innerText = thing.title + ' (' + thing.unitwidth + ' x ' + thing.unitheight + ')';
+            //
+            // document.body.appendChild($title);
+            // document.body.appendChild(thing.canvas);
         }
 
         /**

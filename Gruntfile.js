@@ -49,23 +49,23 @@ module.exports = function (grunt) {
                     "dest": "<%= meta.paths.source %>/"
                 }, {
                     "cwd": "<%= meta.paths.source %>/",
-                    "src": "Fonts/**",
-                    "dest": "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>/",
+                    "src": "fonts/**",
+                    "dest": "<%= meta.paths.dist %>/game/",
                     "expand": true
                 }, {
                     "cwd": "<%= meta.paths.source %>/",
-                    "src": "Sounds/**",
-                    "dest": "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>/",
+                    "src": "sounds/**",
+                    "dest": "<%= meta.paths.dist %>/game/",
                     "expand": true
                 }, {
                     "cwd": "<%= meta.paths.source %>/",
-                    "src": "Theme/**",
-                    "dest": "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>/",
+                    "src": "theme/**",
+                    "dest": "<%= meta.paths.dist %>/game/",
                     "expand": true
                 }, {
                     "cwd": "<%= meta.paths.source %>/",
                     "src": "settings/**",
-                    "dest": "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>/",
+                    "dest": "<%= meta.paths.dist %>/game/",
                     "expand": true
                 }]
             }
@@ -77,16 +77,20 @@ module.exports = function (grunt) {
             },
             "dist": {
                 "files": {
-                    "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>.min.js": ["<%= meta.paths.source %>/<%= pkg.name %>.js"],
+                    "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>.min.js": [
+                        "<%= meta.paths.source %>/<%= pkg.name %>.js"
+                    ],
                 }
             },
             "zip": {
                 "files": {
-                    "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>/<%= pkg.name %>-<%= pkg.version %>.min.js": [
+                    "<%= meta.paths.dist %>/game/<%= pkg.name %>-<%= pkg.version %>.min.js": [
                         "<%= meta.paths.source %>/<%= pkg.name %>.js",
                         "<%= meta.paths.source %>/settings/*.js"
                     ],
-                    "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>/index.min.js": ["<%= meta.paths.source %>/index.js"]
+                    "<%= meta.paths.dist %>/game/index.min.js": [
+                        "<%= meta.paths.source %>/index.js"
+                    ]
                 }
             }
         },
@@ -96,7 +100,7 @@ module.exports = function (grunt) {
             },
             "zip": {
                 "files": {
-                    "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>/index.min.css": ["<%= meta.paths.source %>/index.css"]
+                    "<%= meta.paths.dist %>/game/index.min.css": ["<%= meta.paths.source %>/index.css"]
                 }
             }
         },
@@ -115,7 +119,7 @@ module.exports = function (grunt) {
                     }
                 },
                 "files": {
-                    "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>/index.html": "<%= meta.paths.source %>/index.html"
+                    "<%= meta.paths.dist %>/game/index.html": "<%= meta.paths.source %>/index.html"
                 }
             }
         },
@@ -126,16 +130,9 @@ module.exports = function (grunt) {
                     "collapseWhitespace": true
                 },
                 "files": {
-                    "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>/index.html": "<%= meta.paths.dist %>/<%= pkg.name %>-<%= pkg.version %>/index.html"
+                    "<%= meta.paths.dist %>/game/index.html": "<%= meta.paths.dist %>/game/index.html"
                 }
             },
-        },
-        "zip": {
-            "zip": {
-                "cwd": "<%= meta.paths.dist %>/FullScreenMario-<%= pkg.version %>/",
-                "src": "<%= meta.paths.dist %>/FullScreenMario-<%= pkg.version %>/**",
-                "dest": "<%= meta.paths.dist %>/FullScreenMario-<%= pkg.version %>.zip"
-            }
         },
         "mocha_phantomjs": {
             "all": ["Tests/*.html"]
@@ -154,6 +151,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks("grunt-typescript");
     grunt.loadNpmTasks("grunt-zip");
     grunt.registerTask("default", [
-        "tslint", "typescript", "clean", "copy", "uglify", "cssmin", "preprocess", "processhtml", "htmlmin", "mocha_phantomjs", "zip"
+        // "tslint", "typescript", "clean", "copy", "uglify", "cssmin", "preprocess", "processhtml", "htmlmin", "mocha_phantomjs", "zip"
+        "typescript", "clean", "copy", "uglify", "cssmin", "preprocess", "processhtml", "htmlmin"
     ]);
 };

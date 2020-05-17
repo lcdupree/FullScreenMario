@@ -348,7 +348,9 @@ module GamesRunnr {
                 this.onPause.apply(this, this.callbackArguments);
             }
 
-            this.upkeepCanceller(this.upkeepNext);
+            if (this.upkeepCanceller) {
+                this.upkeepCanceller(this.upkeepNext);
+            }
         }
 
         /**

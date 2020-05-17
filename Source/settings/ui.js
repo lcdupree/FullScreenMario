@@ -6,12 +6,12 @@ FullScreenMario.FullScreenMario.settings.ui = {
         },
         "@font-face": {
             "font-family": "'Press Start'",
-            "src": "url('Fonts/pressstart2p-webfont.eot')",
+            "src": "url('/game/fonts/pressstart2p-webfont.eot')",
             "src": [
-                    "url('Fonts/pressstart2p-webfont.eot?#iefix') format('embedded-opentype')",
-                    "url('Fonts/pressstart2p-webfont.woff') format('woff')",
-                    "url('Fonts/pressstart2p-webfont.ttf') format('truetype')",
-                    "url('Fonts/pressstart2p-webfont.svg') format('svg')"
+                    "url('/game/fonts/pressstart2p-webfont.eot?#iefix') format('embedded-opentype')",
+                    "url('/game/fonts/pressstart2p-webfont.woff') format('woff')",
+                    "url('/game/fonts/pressstart2p-webfont.ttf') format('truetype')",
+                    "url('/game/fonts/pressstart2p-webfont.svg') format('svg')"
             ].join(", "),
             "font-weight": "normal",
             "font-style": "normal"
@@ -19,12 +19,7 @@ FullScreenMario.FullScreenMario.settings.ui = {
     },
     "helpSettings": {
         "globalNameAlias": "{%%%%GAME%%%%}",
-        "openings": [
-            "Hi, thanks for playing FullScreenMario! It looks like you're using the console.",
-            "There's not really any way to stop you from messing around so if you'd like to know the common cheats, enter `{%%%%GAME%%%%}.UserWrapper.displayHelpOptions()` here.",
-            "If you'd like, go ahead and look around the source code. There are a few surprises you might have fun with... ;)",
-            "http://www.github.com/FullScreenShenanigans/FullScreenMario"
-        ],
+        "openings": [],
         "options": {
             "Map": [{
                 "title": "{%%%%GAME%%%%}.MapsHandler.setMap",
@@ -158,46 +153,84 @@ FullScreenMario.FullScreenMario.settings.ui = {
             }]
         }
     },
-    "sizeDefault": "Wide",
+    "sizeDefault": "Burner",
     "sizes": {
-        "NES": {
-            "width": 512,
-            "height": 464,
+        "Burner": {
+            "width": 794,
+            "height": 480,
             "full": false
         },
         "Wide": {
             "width": Infinity,
             "height": 464,
             "full": false
-        },
-        "Large": {
-            "width": Infinity,
-            "height": Infinity,
-            "full": false
-        },
-        "Full!": {
-            "width": Infinity,
-            "height": Infinity,
-            "full": true
         }
     },
     "schemas": [
         {
-            "title": "Options",
-            "generator": "OptionsTable",
-            "options": [
-                {
-                    "title": "Volume",
-                    "type": "Number",
-                    "minimum": 0,
-                    "maximum": 100,
-                    "source": function (GameStarter) {
-                        return Math.round(GameStarter.AudioPlayer.getVolume() * 100);
-                    },
-                    "update": function (GameStarter, value) {
-                        GameStarter.AudioPlayer.setVolume(value / 100);
+            "title": "Controls",
+            "isEnclosed": false,
+            "generator": "ControlKeys",
+            "options": (function (controls) {
+                return controls.map(function (title) {
+                    var keyName, displayName;
+
+                    if (typeof title === 'object') {
+                        keyName = title[0];
+                        displayName = title[1];
+
+                    } else {
+                        keyName = title;
+                        displayName = title;
                     }
-                },
+
+                    // rename control string?
+                    if (displayName === 'sprint') {
+                        displayName = 'Run/Fire';
+                    }
+
+                    // set first letter uppercase
+                    displayName = displayName[0].toUpperCase() + displayName.substr(1);
+
+                    return {
+                        "title": displayName,
+                        "type": "Keys",
+                        "storeLocally": true,
+                        "source": function (GameStarter) {
+                            return GameStarter.InputWriter
+                                .getAliasAsKeyStrings(keyName)
+                                .map(function (string) {
+                                    return string.toLowerCase();
+                                });
+                        },
+                        "callback": function (GameStarter, valueOld, valueNew) {
+                            GameStarter.InputWriter.switchAliasValues(
+                                keyName,
+                                [GameStarter.InputWriter.convertKeyStringToAlias(valueOld)],
+                                [GameStarter.InputWriter.convertKeyStringToAlias(valueNew)]
+                            );
+                        }
+                    };
+                });
+            })(["left", "right", ["up", "jump"], "down", "sprint", "pause"])
+        },
+        {
+            "title": "Options",
+            "isEnclosed": false,
+            "generator": "ActionButtons",
+            "options": [
+                // {
+                //     "title": "Volume",
+                //     "type": "Number",
+                //     "minimum": 0,
+                //     "maximum": 100,
+                //     "source": function (GameStarter) {
+                //         return Math.round(GameStarter.AudioPlayer.getVolume() * 100);
+                //     },
+                //     "update": function (GameStarter, value) {
+                //         GameStarter.AudioPlayer.setVolume(value / 100);
+                //     }
+                // },
                 {
                     "title": "Mute",
                     "type": "Boolean",
@@ -211,164 +244,141 @@ FullScreenMario.FullScreenMario.settings.ui = {
                         GameStarter.AudioPlayer.setMutedOff();
                     }
                 },
-                {
-                    "title": "Speed",
-                    "type": "Select",
-                    "options": function (GameStarter) {
-                        return [".25x", ".5x", "1x", "2x", "5x"];
-                    },
-                    "source": function (GameStarter) {
-                        return "1x";
-                    },
-                    "update": function (GameStarter, value) {
-                        GameStarter.GamesRunner.setSpeed(
-                            Number(value.replace('x', ''))
-                        );
-                    },
-                    "storeLocally": true
-                },
-                {
-                    "title": "View Mode",
-                    "type": "ScreenSize"
-                },
-                {
-                    "title": "Framerate",
-                    "type": "Select",
-                    "options": function (GameStarter) {
-                        return ["60fps", "30fps"];
-                    },
-                    "source": function (GameStarter) {
-                        return (1 / GameStarter.PixelDrawer.getFramerateSkip() * 60) + "fps";
-                    },
-                    "update": function (GameStarter, value) {
-                        var numeric = Number(value.replace("fps", ""));
-                        GameStarter.PixelDrawer.setFramerateSkip(1 / numeric * 60);
-                    },
-                    "storeLocally": true
-                },
-                {
-                    "title": "Tilt Controls",
-                    "type": "Boolean",
-                    "storeLocally": true,
-                    "source": function (GameStarter) {
-                        return false;
-                    },
-                    "enable": function (GameStarter) {
-                        window.ondevicemotion = GameStarter.InputWriter.makePipe("ondevicemotion", "type");
-                    },
-                    "disable": function (GameStarter) {
-                        window.ondevicemotion = undefined;
-                    }
-                }
+                // {
+                //     "title": "Speed",
+                //     "type": "Select",
+                //     "options": function (GameStarter) {
+                //         return [".25x", ".5x", "1x", "2x", "5x"];
+                //     },
+                //     "source": function (GameStarter) {
+                //         return "1x";
+                //     },
+                //     "update": function (GameStarter, value) {
+                //         GameStarter.GamesRunner.setSpeed(
+                //             Number(value.replace('x', ''))
+                //         );
+                //     },
+                //     "storeLocally": true
+                // },
+                // {
+                //     "title": "View Mode",
+                //     "type": "ScreenSize"
+                // },
+                // {
+                //     "title": "Framerate",
+                //     "type": "Select",
+                //     "options": function (GameStarter) {
+                //         return ["60fps", "30fps"];
+                //     },
+                //     "source": function (GameStarter) {
+                //         return (1 / GameStarter.PixelDrawer.getFramerateSkip() * 60) + "fps";
+                //     },
+                //     "update": function (GameStarter, value) {
+                //         var numeric = Number(value.replace("fps", ""));
+                //         GameStarter.PixelDrawer.setFramerateSkip(1 / numeric * 60);
+                //     },
+                //     "storeLocally": true
+                // },
+                // {
+                //     "title": "Tilt Controls",
+                //     "type": "Boolean",
+                //     "storeLocally": true,
+                //     "source": function (GameStarter) {
+                //         return false;
+                //     },
+                //     "enable": function (GameStarter) {
+                //         window.ondevicemotion = GameStarter.InputWriter.makePipe("ondevicemotion", "type");
+                //     },
+                //     "disable": function (GameStarter) {
+                //         window.ondevicemotion = undefined;
+                //     }
+                // }
             ],
-            "actions": [
-                {
-                    "title": "Screenshot",
-                    "action": function (GameStarter) {
-                        GameStarter.takeScreenshot("FullScreenMario " + new Date().getTime());
-                    }
-                }
-            ]
-        }, {
-            "title": "Controls",
-            "generator": "OptionsTable",
-            "options": (function (controls) {
-                return controls.map(function (title) {
-                    return {
-                        "title": title[0].toUpperCase() + title.substr(1),
-                        "type": "Keys",
-                        "storeLocally": true,
-                        "source": function (GameStarter) {
-                            return GameStarter.InputWriter
-                                .getAliasAsKeyStrings(title)
-                                .map(function (string) {
-                                    return string.toLowerCase();
-                                });
-                        },
-                        "callback": function (GameStarter, valueOld, valueNew) {
-                            GameStarter.InputWriter.switchAliasValues(
-                                title,
-                                [GameStarter.InputWriter.convertKeyStringToAlias(valueOld)],
-                                [GameStarter.InputWriter.convertKeyStringToAlias(valueNew)]
-                            );
-                        }
-                    };
-                });
-            })(["left", "right", "up", "down", "sprint", "pause"])
-        }, {
-            "title": "Mods!",
-            "generator": "OptionsButtons",
-            "keyActive": "enabled",
-            "assumeInactive": true,
-            "options": function (GameStarter) {
-                return GameStarter.ModAttacher.getMods();
-            },
-            "callback": function (GameStarter, schema, button) {
-                GameStarter.ModAttacher.toggleMod(button.getAttribute("value") || button.textContent);
-            }
-        }, {
-            "title": "Editor",
-            "generator": "LevelEditor"
-        }, {
-            "title": "Maps",
-            "generator": "MapsGrid",
-            "rangeX": [1, 4],
-            "rangeY": [1, 8],
-            "extras": {
-                "Map Generator!": (function () {
-                    var shuffle = function (string) {
-                        return string
-                            .split('')
-                            // Same function used in browserchoice.eu :)
-                            .sort(function () {
-                                return 0.5 - Math.random()
-                            })
-                            .reverse()
-                            .join('');
-                    };
-
-                    var getNewSeed = function () {
-                        return shuffle(String(new Date().getTime()));
-                    };
-
-                    return {
-                        "title": "Map Generator!",
-                        "callback": function (GameStarter, schema, button, event) {
-                            var parent = event.target.parentNode,
-                                randomizer = parent.querySelector(".randomInput");
-
-                            randomizer.value = randomizer.value.replace(/[^\d]/g, '');
-                            if (!randomizer.value) {
-                                randomizer.value = getNewSeed();
-                            }
-
-                            GameStarter.LevelEditor.disable();
-                            GameStarter.NumberMaker.resetFromSeed(randomizer.value);
-                            GameStarter.setMap("Random");
-
-                            if (!randomizer.getAttribute("custom")) {
-                                randomizer.value = getNewSeed();
-                            }
-                        },
-                        "extraElements": [
-                            [
-                                "input", {
-                                    "className": "randomInput maps-grid-input",
-                                    "type": "text",
-                                    "value": getNewSeed(),
-                                    "onchange": function (event) {
-                                        event.target.setAttribute("custom", true)
-                                    }
-                                }
-                            ]
-                        ]
-                    };
-                })()
-            },
-            "callback": function (GameStarter, schema, button, event) {
-                GameStarter.LevelEditor.disable();
-                GameStarter.setMap(button.getAttribute("value") || button.textContent);
-            }
-        }
+            // "actions": [
+            //     {
+            //         "title": "Screenshot",
+            //         "action": function (GameStarter) {
+            //             GameStarter.takeScreenshot("FullScreenMario " + new Date().getTime());
+            //         }
+            //     }
+            // ]
+        },
+        // {
+        //     "title": "Mods!",
+        //     "generator": "OptionsButtons",
+        //     "keyActive": "enabled",
+        //     "assumeInactive": true,
+        //     "options": function (GameStarter) {
+        //         return GameStarter.ModAttacher.getMods();
+        //     },
+        //     "callback": function (GameStarter, schema, button) {
+        //         GameStarter.ModAttacher.toggleMod(button.getAttribute("value") || button.textContent);
+        //     }
+        // },
+        // {
+        //     "title": "Editor",
+        //     "generator": "LevelEditor"
+        // },
+        // {
+        //     "title": "Levels",
+        //     "generator": "MapsGrid",
+        //     "rangeX": [1, 4],
+        //     "rangeY": [1, 8],
+        //     // "extras": {
+        //     //     "Map Generator!": (function () {
+        //     //         var shuffle = function (string) {
+        //     //             return string
+        //     //                 .split('')
+        //     //                 // Same function used in browserchoice.eu :)
+        //     //                 .sort(function () {
+        //     //                     return 0.5 - Math.random()
+        //     //                 })
+        //     //                 .reverse()
+        //     //                 .join('');
+        //     //         };
+        //     //
+        //     //         var getNewSeed = function () {
+        //     //             return shuffle(String(new Date().getTime()));
+        //     //         };
+        //     //
+        //     //         return {
+        //     //             "title": "Map Generator!",
+        //     //             "callback": function (GameStarter, schema, button, event) {
+        //     //                 var parent = event.target.parentNode,
+        //     //                     randomizer = parent.querySelector(".randomInput");
+        //     //
+        //     //                 randomizer.value = randomizer.value.replace(/[^\d]/g, '');
+        //     //                 if (!randomizer.value) {
+        //     //                     randomizer.value = getNewSeed();
+        //     //                 }
+        //     //
+        //     //                 GameStarter.LevelEditor.disable();
+        //     //                 GameStarter.NumberMaker.resetFromSeed(randomizer.value);
+        //     //                 GameStarter.setMap("Random");
+        //     //
+        //     //                 if (!randomizer.getAttribute("custom")) {
+        //     //                     randomizer.value = getNewSeed();
+        //     //                 }
+        //     //             },
+        //     //             "extraElements": [
+        //     //                 [
+        //     //                     "input", {
+        //     //                         "className": "randomInput maps-grid-input",
+        //     //                         "type": "text",
+        //     //                         "value": getNewSeed(),
+        //     //                         "onchange": function (event) {
+        //     //                             event.target.setAttribute("custom", true)
+        //     //                         }
+        //     //                     }
+        //     //                 ]
+        //     //             ]
+        //     //         };
+        //     //     })()
+        //     // },
+        //     "callback": function (GameStarter, schema, button, event) {
+        //         GameStarter.LevelEditor.disable();
+        //         GameStarter.setMap(button.getAttribute("value") || button.textContent);
+        //     }
+        // }
     ]
 };

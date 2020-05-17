@@ -31,7 +31,7 @@ FullScreenMario.FullScreenMario.settings.statistics = {
             "valueDefault": 1
         },
         "muted": {
-            "valueDefault": false
+            "valueDefault": true
         },
         "power": {
             "valueDefault": 1,
@@ -43,7 +43,7 @@ FullScreenMario.FullScreenMario.settings.statistics = {
         "score": {
             "valueDefault": 0,
             "digits": 6,
-            "hasElement": true,
+            // "hasElement": true,
             "modularity": 100000,
             "onModular": function (EightBitter) {
                 EightBitter.gainLife();
@@ -54,13 +54,13 @@ FullScreenMario.FullScreenMario.settings.statistics = {
             "digits": 3,
             //"hasElement": true,
             "minimum": 0,
-            "triggers": {
-                "100": function (EightBitter) {
-                    if (!EightBitter.MapScreener.notime) {
-                        EightBitter.AudioPlayer.playThemePrefixed("Hurry");
-                    }
-                }
-            },
+            // "triggers": {
+            //     "100": function (EightBitter) {
+            //         if (!EightBitter.MapScreener.notime) {
+            //             EightBitter.AudioPlayer.playThemePrefixed("Hurry");
+            //         }
+            //     }
+            // },
             "onMinimum": function (EightBitter) {
                 EightBitter.killPlayer(EightBitter.player, true);
             }
